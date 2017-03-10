@@ -3,22 +3,26 @@
 Created on Sun Oct 02 17:13:59 2016
 
 @author: ekobylkin
-"""
-#https://www.kaggle.com/overratedgman/breast-cancer-wisconsin-data
-import pandas as pd
 
+This is an example on how to prepare data for autosklearn-zeroconf.
+It is using a well known Titanic dataset from Kaggle https://www.kaggle.com/c/titanic .
+"""
+import pandas as pd
+# Dowlnoad these files from Kaggle dataset
+#https://www.kaggle.com/c/titanic/download/train.csv
+#https://www.kaggle.com/c/titanic/download/test.csv
 train = pd.read_csv(filepath_or_buffer='train.csv',sep=',', error_bad_lines=False, index_col=False)
 test = pd.read_csv(filepath_or_buffer='test.csv',sep=',', error_bad_lines=False, index_col=False)
-test['Survived']=None
+
+# We will use the test.csv data to make a prediction. You can compare the predicted values with the ground truth yourself.
+test['Survived']=None # The empty target column tells autosklearn-zeroconf to use these cases for the prediction
+
 dataframe=train.append(test)
+
+# autosklearn-zeroconf requires cust_id and category (target or "y" variable) columns, the rest is optional
 dataframe.rename(columns = {'PassengerId':'cust_id','Survived':'category'},inplace=True)
-dataframe['category']=dataframe['category'].astype('category').cat.codes #None->-1, 0->0,1->1
 
-X_pred= dataframe[ dataframe.category == -1 ]
-
-#dataframe['category']=dataframe['category'].apply(lambda x : 1 if x>0 else 0)
-print(dataframe.dtypes)
 store = pd.HDFStore('Titanic.h5') # this is the file cache for the data
 store['data'] = dataframe
 store.close()
-
+#Now run 'zeroconf.py Titanic.h5'
