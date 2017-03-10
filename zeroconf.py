@@ -265,8 +265,6 @@ p("Predicting. This can take a long time for a large prediction set.")
 y_pred = c.predict(X_unknown.values)
 p("Prediction done")
 
-# http://pandas.pydata.org/pandas-docs/stable/api.html#api-dataframe-stats
-# https://github.com/automl/ChaLearn_Automatic_Machine_Learning_Challenge_2015/blob/master/004_yolanda.py
 result_df = pd.DataFrame({'cust_id':row_id_unknown,'prediction':pd.Series(y_pred,index=row_id_unknown.index)})
 p("Exporting the data")
 result_df.to_csv(result_filename, index=False, header=True) 
