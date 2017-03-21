@@ -7,6 +7,7 @@ To keep the training time reasonable autosklearn-zeroconf samples the data and t
 
 ## Running autosklearn-zeroconf
 To run autosklearn-zeroconf start '''zeroconf.py your_dataframe.h5''' from command line.
+The script was tested on Ubuntu and RedHat. It won't work on any WindowsOS because auto-sklearn doesn't support Windows.
 
 ## Data Format
 The code uses a pandas dataframe format to manage the data. It is stored in the HDF5 file for convenience.
@@ -19,16 +20,17 @@ The script itself needs no installation, just copy it with the rest of the files
 
 ### Install auto-sklearn
 <pre>
-# On Ubuntu
+# If you have no Python environment installed install Anaconda.
 wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
 chmod u+x Anaconda3-Linux-x86_64.sh
 ./Anaconda3-Linux-x86_64.sh
 # A compiler is needed to compile a few things the from requirements.txt
-# Chose for your Linux flavor
+# Chose just the line for your Linux flavor below
 # On Ubuntu
 sudo apt-get install gcc build-essential 
 # On RedHat
 yum -y groupinstall 'Development Tools'
+
 curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
 pip install auto-sklearn
 </pre>
