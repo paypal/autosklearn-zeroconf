@@ -14,6 +14,25 @@ As an example you can run autosklearn-zeroconf on a widely known Titanic dataset
 Download these two csv files https://www.kaggle.com/c/titanic/download/train.csv https://www.kaggle.com/c/titanic/download/test.csv and use 
 zeroconf-load-dataset-Titanic.py convert them into one HDF5 file Titanic.h5
 
+## Installation
+The script itself needs no installation, just copy it with the rest of the files in your working directory.
+
+### Install auto-sklearn
+<code>
+# On Ubuntu
+wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
+chmod u+x Anaconda3-Linux-x86_64.sh
+./Anaconda3-Linux-x86_64.sh
+# A compiler is needed to compile a few things the from requirements.txt
+# Chose for your Linux flavor
+# On Ubuntu
+sudo apt-get install gcc build-essential 
+# On RedHat
+yum -y groupinstall 'Development Tools'
+curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
+pip install auto-sklearn
+</code>
+
 ## License
 autosklearn-zeroconf is licensed under the [BSD 3-Clause License (Revised)](LICENSE.txt)
 
