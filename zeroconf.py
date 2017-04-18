@@ -62,9 +62,10 @@ def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
 def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
     p("constructing preprocessor pipeline and transforming sample dataset")
     # we don't care about the data here but need to preprocess, otherwise the classifiers crash
-    default_cs = SimpleClassificationPipeline.get_hyperparameter_search_space(
-                            include={ 'imputation': 'most_frequent'
-                                        , 'rescaling': 'standardize' }
+    default_cs = SimpleClassificationPipeline(
+                                        ).get_hyperparameter_search_space(
+#                            include={ 'imputation': 'most_frequent'
+#                                        , 'rescaling': 'standardize' }
                                         ).get_default_configuration()
     preprocessor = SimpleClassificationPipeline(default_cs, random_state=42)
     preprocessor.fit(X,y)
