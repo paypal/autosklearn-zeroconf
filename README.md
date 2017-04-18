@@ -6,7 +6,7 @@ As a result running auto-sklearn becomes a "fire and forget" type of operation. 
 To keep the training time reasonable autosklearn-zeroconf samples the data and tests all the models from autosklearn library on it once. The results of the test (duration) is used to calculate the per_run_time_limit, time_left_for_this_task and number of seeds parameters for autosklearn. The code also converts the panda dataframe into a form that autosklearn can handle (categorical and float datatypes).
 
 ## Running autosklearn-zeroconf
-To run autosklearn-zeroconf start '''zeroconf.py your_dataframe.h5''' from command line.
+To run autosklearn-zeroconf start '''python zeroconf.py your_dataframe.h5''' from command line.
 The script was tested on Ubuntu and RedHat. It won't work on any WindowsOS because auto-sklearn doesn't support Windows.
 
 ## Data Format
