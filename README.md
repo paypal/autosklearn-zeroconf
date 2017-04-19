@@ -41,6 +41,9 @@ The script itself needs no installation, just copy it with the rest of the files
 Alternatively you could use git clone
 <pre>
 sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
+cd autosklearn-zeroconf
+wget https://www.kaggle.com/c/titanic/download/test.csv
+wget https://www.kaggle.com/c/titanic/download/train.csv
 </pre>
 
 ### Install auto-sklearn
@@ -58,6 +61,7 @@ yum -y groupinstall 'Development Tools'
 
 curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
 pip install auto-sklearn
+
 </pre>
 
 ## License
