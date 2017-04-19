@@ -18,6 +18,8 @@ from autosklearn.constants import *
 
 from sklearn.cross_validation import train_test_split
 import sklearn.metrics
+from sklearn.metrics import (confusion_matrix, precision_score
+, recall_score, f1_score, accuracy_score)
 
 import argparse
 
@@ -61,7 +63,7 @@ def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
     # no return statement here because max_clf_time is a managed object 
 
 def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
-    p("constructing preprocessor pipeline and transforming sample dataset")
+    p("Constructing preprocessor pipeline and transforming sample data")
     # we don't care about the data here but need to preprocess, otherwise the classifiers crash
     default_cs = SimpleClassificationPipeline(
                                         ).get_hyperparameter_search_space(
@@ -72,7 +74,7 @@ def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
     preprocessor.fit(X,y)
     X_tr,dummy = preprocessor.pre_transform(X,y)
 
-    p("running estimators on a subset")
+    p("Running estimators on the sample")
     # going over all default classifiers used by auto-sklearn
     clfs=autosklearn.pipeline.components.classification._classifiers
 
@@ -89,11 +91,11 @@ def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
             # until the classifier fit process finishes. After max_classifier_time_budget 
             # we will terminate all still running processes here. 
             if pr.is_alive():
-                p("terminating "+pr.name+" process due to timeout")    
+                p("Terminating "+pr.name+" process due to timeout")    
                 pr.terminate()
         result_max_clf_time=max_clf_time.value
 
-    p("test classifier fit completed")
+    p("Test classifier fit completed")
     
     per_run_time_limit = int(sample_factor*result_max_clf_time) 
     return max_classifier_time_budget if per_run_time_limit > max_classifier_time_budget else per_run_time_limit
@@ -101,11 +103,11 @@ def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
 def read_dataframe_h5(filename):
     with pd.HDFStore(filename,  mode='r') as store:
         df=store.select('data')
-    p("read dataset from the store")
+    p("Read dataset from the store")
     return df
 
 def x_y_dataframe_split(dataframe, id=False):
-    p("dataframe split into X and y")
+    p("Dataframe split into X and y")
     X = dataframe.drop(['cust_id','category'], axis=1)
     y = pd.np.array(dataframe['category'], dtype='int')
     if id:
@@ -167,13 +169,11 @@ def train_multicore(X, y, feat_type, pool_size=1, per_run_time_limit=60):
 
 filename = str(args.filename[0])
 dataframe = read_dataframe_h5(filename)
-p(dataframe['category'].unique()) 
-p("filling missing values with the most frequent values")
+p("Values of y "+str(dataframe['category'].unique())) 
+p("Filling missing values in X with the most frequent values")
 # we need to "protect" NAs here for the dataset separation later
-dataframe['category'] = dataframe['category'].fillna(-1) 
 dataframe = dataframe.fillna(dataframe.mode().iloc[0])
-p(dataframe['category'].unique()) 
-p("factorizing the X")    
+p("Factorizing the X")    
 # we need this list of original dtypes for the Autosklearn fit, create it before categorisation or split
 col_dtype_dict = {c:( 'Numerical' if np.issubdtype(dataframe[c].dtype, np.number) else 'Categorical' )
                                      for c in dataframe.columns if c not in ['cust_id','category']}
@@ -191,27 +191,27 @@ del dataframe
 
 X,y = x_y_dataframe_split(df_known)
 
-# prepare a sample to measure approx classifier run time and select features
+p("Preparing a sample to measure approx classifier run time and select features")
 max_sample_size=100000 # so that the classifiers fit method completes in a reasonable time  
 dataset_size=df_known.shape[0]
 
 if dataset_size > max_sample_size :
     sample_factor = dataset_size/float(max_sample_size)
-    p("sample factor ="+str(sample_factor))
+    p("Sample factor ="+str(sample_factor))
     X_sample,y_sample = x_y_dataframe_split(df_known.sample(max_sample_size,random_state=42))
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=33000, random_state=42) # no need for larger test
 else :
     sample_factor = 1
     X_sample,y_sample = X,y  
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.33, random_state=42)
-p("reserved 33% of the training dataset for validation (upto 33k rows)")
+p("Reserved 33% of the training dataset for validation (upto 33k rows)")
 
 per_run_time_limit = max_estimators_fit_duration(X_train.values,y_train,max_classifier_time_budget,sample_factor)
 p("per_run_time_limit="+str(per_run_time_limit))
 pool_size = define_pool_size(memory_limit)    
 p("Process pool size="+str(pool_size))
 feat_type= [col_dtype_dict[c] for c in X.columns]
-p("starting autosklearn classifiers fiting")
+p("Starting autosklearn classifiers fiting")
 train_multicore(X_train.values, y_train, feat_type, pool_size, per_run_time_limit)
 
 p("Building ensemble")
@@ -236,15 +236,31 @@ p("Ensemble built")
 
 p("Show models")
 p(c.show_models())
-p("Predicting")
+
+p("Validating")
+p("Predicting on validation set")
 y_hat = c.predict(X_test.values)
+
 p("Accuracy score " + str(sklearn.metrics.accuracy_score(y_test, y_hat)))
 
-if df_unknown.shape[0]==0:
+print("\n"+"[ZEROCONF] "+"#"*72)
+p("The below scores are calculated for predicting '1' category value")
+print("[ZEROCONF] Precision: {0:2.0%}, Recall: {1:2.0%}, F1: {2:.2f}".format(
+precision_score(y_test, y_hat),recall_score(y_test, y_hat),f1_score(y_test, y_hat)))
+print("[ZEROCONF] Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall")
+p(confusion_matrix(y_test, y_hat))   
+baseline_1 = str(sum(a for a in y_test))
+baseline_all = str(len(y_test))
+baseline_prcnt = "{0:2.0%}".format( float(sum(a for a in y_test)/len(y_test))) 
+print ("[ZEROCONF] Baseline %s positives from %s overall = %1.1f%%" %
+(sum(a for a in y_test), len(y_test), 100*sum(a for a in y_test)/len(y_test)))
+print("\n"+"[ZEROCONF] "+"#"*72)
+
+if df_unknown.shape[0]==0: # if there is nothing to predict we can stop already
     p("##### Nothing to predict. Prediction dataset is empty. #####")
     exit(0)
 
-p("Re-fitting on full known dataset. This can take long for a large set.")
+p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
 try:
     c.refit(X.values, y)
 except Exception as e:

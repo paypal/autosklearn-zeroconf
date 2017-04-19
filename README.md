@@ -63,3 +63,112 @@ pip install auto-sklearn
 ## License
 autosklearn-zeroconf is licensed under the [BSD 3-Clause License (Revised)](LICENSE.txt)
 
+## Example of the output
+<pre>
+python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF
+[ZEROCONF] Read dataset from the store # 20:14 #
+[ZEROCONF] Values of y [ 0  1 -1] # 20:14 #
+[ZEROCONF] Filling missing values in X with the most frequent values # 20:14 #
+[ZEROCONF] Factorizing the X # 20:14 #
+[ZEROCONF] Dataframe split into X and y # 20:14 #
+[ZEROCONF] Preparing a sample to measure approx classifier run time and select features # 20:14 #
+[ZEROCONF] Reserved 33% of the training dataset for validation (upto 33k rows) # 20:14 #
+[ZEROCONF] Constructing preprocessor pipeline and transforming sample data # 20:14 #
+[ZEROCONF] Running estimators on the sample # 20:14 #
+[ZEROCONF] decision_tree starting # 20:14 #
+[ZEROCONF] decision_tree training time: 0.0013499259948730469 # 20:14 #
+[ZEROCONF] gaussian_nb starting # 20:14 #
+[ZEROCONF] gaussian_nb training time: 0.03557109832763672 # 20:14 #
+[ZEROCONF] bernoulli_nb starting # 20:14 #
+[ZEROCONF] bernoulli_nb training time: 0.05591177940368652 # 20:14 #
+[ZEROCONF] k_nearest_neighbors starting # 20:14 #
+[ZEROCONF] k_nearest_neighbors training time: 0.03613591194152832 # 20:14 #
+[ZEROCONF] liblinear_svc starting # 20:14 #
+[ZEROCONF] liblinear_svc training time: 0.02362370491027832 # 20:14 #
+[ZEROCONF] lda starting # 20:14 #
+[ZEROCONF] lda training time: 0.12917685508728027 # 20:14 #
+[ZEROCONF] multinomial_nb starting # 20:14 #
+[ZEROCONF] multinomial_nb training time: 0.06360983848571777 # 20:14 #
+[ZEROCONF] passive_aggressive starting # 20:14 #
+[ZEROCONF] passive_aggressive training time: 0.10781621932983398 # 20:14 #
+[ZEROCONF] sgd starting # 20:14 #
+[ZEROCONF] sgd training time: 0.0836634635925293 # 20:14 #
+[ZEROCONF] adaboost starting # 20:14 #
+[ZEROCONF] adaboost training time: 0.4440269470214844 # 20:14 #
+[ZEROCONF] extra_trees starting # 20:14 #
+[ZEROCONF] extra_trees training time: 0.7000019550323486 # 20:14 #
+[ZEROCONF] gradient_boosting starting # 20:14 #
+[ZEROCONF] gradient_boosting training time: 0.7240493297576904 # 20:14 #
+[ZEROCONF] random_forest starting # 20:14 #
+[ZEROCONF] random_forest training time: 0.6279892921447754 # 20:14 #
+[ZEROCONF] Test classifier fit completed # 20:14 #
+[ZEROCONF] per_run_time_limit=3 # 20:14 #
+[ZEROCONF] Process pool size=1 # 20:14 #
+[ZEROCONF] Starting autosklearn classifiers fiting # 20:14 #
+[ZEROCONF] Max time allowance for a model 1 minute(s) # 20:14 #
+[ZEROCONF] Overal run time is about 10 minute(s) # 20:14 #
+[ZEROCONF] Starting seed=2 # 20:14 #
+[ZEROCONF] ####### Finished seed=2 # 20:19 #
+[ZEROCONF] Multicore fit completed # 20:19 #
+[ZEROCONF] Building ensemble # 20:19 #
+[ZEROCONF] Ensemble built # 20:20 #
+[ZEROCONF] Show models # 20:20 #
+[ZEROCONF] [(0.400000, SimpleClassificationPipeline({'preprocessor:liblinear_svc_preprocessor:tol': 0.00010000000000000009, 'balancing:strategy': 'weighting', 'preprocessor:liblinear_svc_preprocessor:loss': 'squared_hinge', 'classifier:adaboost:algorithm': 'SAMME', 'preprocessor:liblinear_svc_preprocessor:C': 1.0, 'preprocessor:liblinear_svc_preprocessor:penalty': 'l1', 'preprocessor:__choice__': 'liblinear_svc_preprocessor', 'preprocessor:liblinear_svc_preprocessor:fit_intercept': 'True', 'one_hot_encoding:use_minimum_fraction': 'False', 'preprocessor:liblinear_svc_preprocessor:intercept_scaling': 1, 'preprocessor:liblinear_svc_preprocessor:dual': 'False', 'classifier:adaboost:learning_rate': 0.026303797714332906, 'rescaling:__choice__': 'minmax', 'classifier:adaboost:max_depth': 2, 'imputation:strategy': 'median', 'classifier:adaboost:n_estimators': 143, 'preprocessor:liblinear_svc_preprocessor:multi_class': 'ovr', 'classifier:__choice__': 'adaboost'}, # 20:20 #
+[ZEROCONF] dataset_properties={ # 20:20 #
+[ZEROCONF]   'task': 1, # 20:20 #
+[ZEROCONF]   'target_type': 'classification', # 20:20 #
+[ZEROCONF]   'sparse': False, # 20:20 #
+[ZEROCONF]   'signed': False, # 20:20 #
+[ZEROCONF]   'multilabel': False, # 20:20 #
+[ZEROCONF]   'multiclass': False})), # 20:20 #
+[ZEROCONF] (0.300000, SimpleClassificationPipeline({'classifier:random_forest:min_samples_leaf': 5, 'balancing:strategy': 'weighting', 'classifier:random_forest:bootstrap': 'False', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_features': 4.138756484748367, 'classifier:random_forest:min_samples_split': 9, 'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:random_forest:n_estimators': 100, 'rescaling:__choice__': 'standardize', 'preprocessor:__choice__': 'no_preprocessing', 'imputation:strategy': 'median', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:max_depth': 'None'}, # 20:20 #
+[ZEROCONF] dataset_properties={ # 20:20 #
+[ZEROCONF]   'task': 1, # 20:20 #
+[ZEROCONF]   'target_type': 'classification', # 20:20 #
+[ZEROCONF]   'sparse': False, # 20:20 #
+[ZEROCONF]   'signed': False, # 20:20 #
+[ZEROCONF]   'multilabel': False, # 20:20 #
+[ZEROCONF]   'multiclass': False})), # 20:20 #
+[ZEROCONF] (0.100000, SimpleClassificationPipeline({'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:passive_aggressive:loss': 'squared_hinge', 'balancing:strategy': 'weighting', 'classifier:passive_aggressive:n_iter': 412, 'classifier:passive_aggressive:fit_intercept': 'True', 'classifier:__choice__': 'passive_aggressive', 'rescaling:__choice__': 'minmax', 'preprocessor:__choice__': 'no_preprocessing', 'imputation:strategy': 'mean', 'classifier:passive_aggressive:C': 0.002134508671186945}, # 20:20 #
+[ZEROCONF] dataset_properties={ # 20:20 #
+[ZEROCONF]   'task': 1, # 20:20 #
+[ZEROCONF]   'target_type': 'classification', # 20:20 #
+[ZEROCONF]   'sparse': False, # 20:20 #
+[ZEROCONF]   'signed': False, # 20:20 #
+[ZEROCONF]   'multilabel': False, # 20:20 #
+[ZEROCONF]   'multiclass': False})), # 20:20 #
+[ZEROCONF] (0.100000, SimpleClassificationPipeline({'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:adaboost:max_depth': 2, 'balancing:strategy': 'weighting', 'classifier:adaboost:algorithm': 'SAMME.R', 'classifier:__choice__': 'adaboost', 'rescaling:__choice__': 'minmax', 'preprocessor:__choice__': 'no_preprocessing', 'imputation:strategy': 'median', 'classifier:adaboost:n_estimators': 232, 'classifier:adaboost:learning_rate': 0.10000000000000002}, # 20:20 #
+[ZEROCONF] dataset_properties={ # 20:20 #
+[ZEROCONF]   'task': 1, # 20:20 #
+[ZEROCONF]   'target_type': 'classification', # 20:20 #
+[ZEROCONF]   'sparse': False, # 20:20 #
+[ZEROCONF]   'signed': False, # 20:20 #
+[ZEROCONF]   'multilabel': False, # 20:20 #
+[ZEROCONF]   'multiclass': False})), # 20:20 #
+[ZEROCONF] (0.100000, SimpleClassificationPipeline({'classifier:random_forest:min_samples_leaf': 7, 'balancing:strategy': 'none', 'classifier:random_forest:bootstrap': 'True', 'classifier:__choice__': 'random_forest', 'one_hot_encoding:minimum_fraction': 0.01626967550201217, 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_features': 1.6830354508687444, 'classifier:random_forest:min_samples_split': 5, 'one_hot_encoding:use_minimum_fraction': 'True', 'classifier:random_forest:n_estimators': 100, 'rescaling:__choice__': 'minmax', 'preprocessor:__choice__': 'no_preprocessing', 'imputation:strategy': 'median', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:max_depth': 'None'}, # 20:20 #
+[ZEROCONF] dataset_properties={ # 20:20 #
+[ZEROCONF]   'task': 1, # 20:20 #
+[ZEROCONF]   'target_type': 'classification', # 20:20 #
+[ZEROCONF]   'sparse': False, # 20:20 #
+[ZEROCONF]   'signed': False, # 20:20 #
+[ZEROCONF]   'multilabel': False, # 20:20 #
+[ZEROCONF]   'multiclass': False})), # 20:20 #
+[ZEROCONF] ] # 20:20 #
+[ZEROCONF] Validating # 20:20 #
+[ZEROCONF] Predicting on validation set # 20:20 #
+[ZEROCONF] Accuracy score 0.803389830508 # 20:20 #
+[ZEROCONF] ########################################################################
+[ZEROCONF] The below scores are calculated for predicting '1' category value # 20:20 #
+[ZEROCONF] Precision: 76%, Recall: 71%, F1: 0.73
+[ZEROCONF] Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall
+[ZEROCONF] [[157  25] # 20:20 #
+[ZEROCONF]  [ 33  80]] # 20:20 #
+[ZEROCONF] Baseline 113 positives from 295 overall = 38.3%
+[ZEROCONF] ########################################################################
+[ZEROCONF] Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time. # 20:20 #
+[ZEROCONF] Dataframe split into X and y # 20:20 #
+[ZEROCONF] Predicting. This can take a long time for a large prediction set. # 20:20 #
+[ZEROCONF] Prediction done # 20:20 #
+[ZEROCONF] Exporting the data # 20:20 #
+[ZEROCONF] ##### Zeroconf Script Completed! ##### # 20:20 #
+</pre>
