@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 """
 Copyright 2017 PayPal
 Created on Mon Feb 27 19:11:59 PST 2017
@@ -29,7 +29,7 @@ parser.add_argument('filename', nargs=1, help='pandas HDFS dataframe .h5 with cu
 args = parser.parse_args()
 
 work_dir = './zeroconf_tmp'
-result_filename = 'zeroconf-os-result.csv'
+result_filename = 'zeroconf-result.csv'
 atsklrn_tempdir=os.path.join(work_dir, 'atsklrn_tmp')
 shutil.rmtree(atsklrn_tempdir,ignore_errors=True) # cleanup - remove temp directory
 
@@ -39,7 +39,8 @@ global max_classifier_time_budget
 max_classifier_time_budget = 1200 # but 10 minutes is usually more than enough
 
 def p(text):
-    print ('[ZEROCONF] '+text+" # "+strftime("%H:%M")+" #")
+    for line in str(text).splitlines():
+        print ('[ZEROCONF] '+line+" # "+strftime("%H:%M")+" #")
 
 def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
     if ('libsvm_svc' == clf_name  # doesn't even scale to a 100k rows
@@ -52,9 +53,9 @@ def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
     try:
         clf.fit(X,y)
     except Exception as e:
-        print(e)
+        p(e)
     classifier_time = time() - t0 # keep time even if classifier crashed
-    print(clf_name+" training time: "+str(classifier_time))
+    p(clf_name+" training time: "+str(classifier_time))
     if max_clf_time.value < int(classifier_time):
         max_clf_time.value = int(classifier_time) 
     # no return statement here because max_clf_time is a managed object 
@@ -104,7 +105,7 @@ def read_dataframe_h5(filename):
     return df
 
 def x_y_dataframe_split(dataframe, id=False):
-    p("dataframe split")
+    p("dataframe split into X and y")
     X = dataframe.drop(['cust_id','category'], axis=1)
     y = pd.np.array(dataframe['category'], dtype='int')
     if id:
@@ -149,8 +150,8 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
 def train_multicore(X, y, feat_type, pool_size=1, per_run_time_limit=60):
     time_left_for_this_task = calculate_time_left_for_this_task(pool_size,per_run_time_limit)
     
-    p("Overal run time is about " + str(2*math.ceil(time_left_for_this_task/60.0)) + " minute(s)")
     p("Max time allowance for a model " + str(math.ceil(per_run_time_limit/60.0)) + " minute(s)")
+    p("Overal run time is about " + str(2*math.ceil(time_left_for_this_task/60.0)) + " minute(s)")
 
     processes = []
     for i in range(2,pool_size+2): # reserve seed 1 for the ensemble building
@@ -166,12 +167,12 @@ def train_multicore(X, y, feat_type, pool_size=1, per_run_time_limit=60):
 
 filename = str(args.filename[0])
 dataframe = read_dataframe_h5(filename)
-print(dataframe['category'].unique()) 
+p(dataframe['category'].unique()) 
 p("filling missing values with the most frequent values")
 # we need to "protect" NAs here for the dataset separation later
 dataframe['category'] = dataframe['category'].fillna(-1) 
 dataframe = dataframe.fillna(dataframe.mode().iloc[0])
-print(dataframe['category'].unique()) 
+p(dataframe['category'].unique()) 
 p("factorizing the X")    
 # we need this list of original dtypes for the Autosklearn fit, create it before categorisation or split
 col_dtype_dict = {c:( 'Numerical' if np.issubdtype(dataframe[c].dtype, np.number) else 'Categorical' )
@@ -198,12 +199,12 @@ if dataset_size > max_sample_size :
     sample_factor = dataset_size/float(max_sample_size)
     p("sample factor ="+str(sample_factor))
     X_sample,y_sample = x_y_dataframe_split(df_known.sample(max_sample_size,random_state=42))
-    p("factorizing the X_sample")    
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=33000, random_state=42) # no need for larger test
 else :
     sample_factor = 1
     X_sample,y_sample = X,y  
-X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.33, random_state=42)
+p("reserved 33% of the training dataset for validation (upto 33k rows)")
 
 per_run_time_limit = max_estimators_fit_duration(X_train.values,y_train,max_classifier_time_budget,sample_factor)
 p("per_run_time_limit="+str(per_run_time_limit))
@@ -234,21 +235,21 @@ sleep(20)
 p("Ensemble built")
 
 p("Show models")
-print(c.show_models())
+p(c.show_models())
 p("Predicting")
 y_hat = c.predict(X_test.values)
-print("Accuracy score", sklearn.metrics.accuracy_score(y_test, y_hat))
+p("Accuracy score " + str(sklearn.metrics.accuracy_score(y_test, y_hat)))
 
 if df_unknown.shape[0]==0:
-    p("nothing to predict. Prediction dataset is empty.")
-    exit()
+    p("##### Nothing to predict. Prediction dataset is empty. #####")
+    exit(0)
 
 p("Re-fitting on full known dataset. This can take long for a large set.")
 try:
     c.refit(X.values, y)
 except Exception as e:
     p("Refit failed, restarting")
-    print(e)
+    p(e)
     try:
         X=X.values
         indices = np.arange(X.shape[0])
@@ -258,15 +259,21 @@ except Exception as e:
         c.refit(X, y)
     except Exception as e:
         p("Second refit failed, exiting")
-        print(e)
-        exit()
+        p(e)
+        exit(1)
 
 X_unknown,y_unknown,row_id_unknown = x_y_dataframe_split(df_unknown, id=True) 
 p("Predicting. This can take a long time for a large prediction set.")
-y_pred = c.predict(X_unknown.values)
+try:
+    y_pred = c.predict(X_unknown.values)
+except Exception as e:
+    p("##### Prediction failed, exiting! #####")
+    p(e)
+    exit(2)
+
 p("Prediction done")
 
 result_df = pd.DataFrame({'cust_id':row_id_unknown,'prediction':pd.Series(y_pred,index=row_id_unknown.index)})
 p("Exporting the data")
 result_df.to_csv(result_filename, index=False, header=True) 
-p("Zeroconf Script Completed!")
+p("##### Zeroconf Script Completed! #####")
