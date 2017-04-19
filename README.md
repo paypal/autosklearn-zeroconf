@@ -1,5 +1,5 @@
 ## What is autosklearn-zeroconf
-The autosklearn-zeroconf file takes a dataframe of any size and trains [auto-sklearn](https://github.com/automl/auto-sklearn) binary classifier ensemble. No configuration is needed as the name suggests. Auto-sklearn is the recent [AutoML Challenge](http://www.kdnuggets.com/2016/08/winning-automl-challenge-auto-sklearn.html) winner, Microsoft Research supported the organization of this challenge and donated the prizes.
+The autosklearn-zeroconf file takes a dataframe of any size and trains [auto-sklearn](https://github.com/automl/auto-sklearn) binary classifier ensemble. No configuration is needed as the name suggests. Auto-sklearn is the recent [AutoML Challenge](http://www.kdnuggets.com/2016/08/winning-automl-challenge-auto-sklearn.html) winner.
 
 As a result of using automl-zeroconf running auto-sklearn becomes a "fire and forget" type of operation. It greatly increases the utility and decreases turnaround time for experiments.
 
@@ -21,9 +21,10 @@ To keep the training time reasonable autosklearn-zeroconf samples the data and t
  multinomial_nb,
  passive_aggressive,
  random_forest,
- sgd,
+ sgd
 
-plus samplers, scalers, imputers
+plus samplers, scalers, imputers (14 feature processing methods, and 3 data preprocessing
+methods,  giving  rise  to  a  structured  hypothesis  space  with  100+  hyperparameters)
 
 ## Running autosklearn-zeroconf
 To run autosklearn-zeroconf start '''python zeroconf.py your_dataframe.h5''' from command line.
