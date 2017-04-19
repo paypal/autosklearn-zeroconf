@@ -27,7 +27,7 @@ plus samplers, scalers, imputers (14 feature processing methods, and 3 data prep
 methods,  giving  rise  to  a  structured  hypothesis  space  with  100+  hyperparameters)
 
 ## Running autosklearn-zeroconf
-To run autosklearn-zeroconf start '''python zeroconf.py your_dataframe.h5''' from command line.
+To run autosklearn-zeroconf start '''python zeroconf.py your_dataframe.h5 2>/dev/null|grep ZEROCONF''' from command line.
 The script was tested on Ubuntu and RedHat. It won't work on any WindowsOS because auto-sklearn doesn't support Windows.
 
 ## Data Format
@@ -38,6 +38,10 @@ zeroconf-load-dataset-Titanic.py convert them into one HDF5 file Titanic.h5
 
 ## Installation
 The script itself needs no installation, just copy it with the rest of the files in your working directory.
+Alternatively you could use git clone
+<pre>
+sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
+</pre>
 
 ### Install auto-sklearn
 <pre>
@@ -48,7 +52,7 @@ chmod u+x Anaconda3-Linux-x86_64.sh
 # A compiler is needed to compile a few things the from requirements.txt
 # Chose just the line for your Linux flavor below
 # On Ubuntu
-sudo apt-get install gcc build-essential 
+sudo apt-get install gcc build-essential
 # On RedHat
 yum -y groupinstall 'Development Tools'
 
