@@ -65,15 +65,14 @@ def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
 def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
     p("Constructing preprocessor pipeline and transforming sample data")
     # we don't care about the data here but need to preprocess, otherwise the classifiers crash
-    default_cs = SimpleClassificationPipeline(
-        include={'imputation': ['most_frequent'],
-#                  'rescaling': ['standardize'] # https://github.com/automl/auto-sklearn/issues/245#issuecomment-295645056
-                }
-        ).get_hyperparameter_search_space().get_default_configuration()
 
-    preprocessor = SimpleClassificationPipeline(default_cs, random_state=42)
-    preprocessor.fit(X,y)
-    X_tr,dummy = preprocessor.pre_transform(X,y)
+    pipeline = SimpleClassificationPipeline(
+        include={'imputation': ['most_frequent'], 'rescaling': ['standardize']})
+    default_cs = pipeline.get_hyperparameter_search_space().get_default_configuration()
+    pipeline = pipeline.set_hyperparameters(default_cs)
+    
+    pipeline.fit(X, y)
+    X_tr, dummy = pipeline.pre_transform(X, y)
 
     p("Running estimators on the sample")
     # going over all default classifiers used by auto-sklearn
@@ -195,6 +194,8 @@ for c in dataframe.select_dtypes(exclude=[np.number]).columns:
 df_unknown = dataframe[ dataframe.category == -1 ] # 'None' gets categorzized into -1
 df_known   = dataframe[ dataframe.category != -1 ] # not [0,1] for multiclass labeling compartibility
 
+print(df_known)
+print(df_unknown)
 del dataframe
 
 X,y = x_y_dataframe_split(df_known)
@@ -270,12 +271,12 @@ if df_unknown.shape[0]==0: # if there is nothing to predict we can stop already
 
 p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
 try:
-    c.refit(X.values, y)
+    c.refit(X.copy().values, y)
 except Exception as e:
     p("Refit failed, restarting")
     p(e)
     try:
-        X=X.values
+        X=X.copy().values
         indices = np.arange(X.shape[0])
         np.random.shuffle(indices)
         X = X[indices]
@@ -286,10 +287,11 @@ except Exception as e:
         p(e)
         exit(1)
 
+
 X_unknown,y_unknown,row_id_unknown = x_y_dataframe_split(df_unknown, id=True) 
 p("Predicting. This can take a long time for a large prediction set.")
 try:
-    y_pred = c.predict(X_unknown.values)
+    y_pred = c.predict(X_unknown.copy().values)
 except Exception as e:
     p("##### Prediction failed, exiting! #####")
     p(e)
