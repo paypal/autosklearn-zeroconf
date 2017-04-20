@@ -170,8 +170,10 @@ def train_multicore(X, y, feat_type, pool_size=1, per_run_time_limit=60):
 filename = str(args.filename[0])
 dataframe = read_dataframe_h5(filename)
 p("Values of y "+str(dataframe['category'].unique())) 
+p("We need to protect NAs in y from the prediction dataset so we convert them to -1")
+dataframe['category'] = dataframe['category'].fillna(-1) 
+p("New values of y "+str(dataframe['category'].unique())) 
 p("Filling missing values in X with the most frequent values")
-# we need to "protect" NAs here for the dataset separation later
 dataframe = dataframe.fillna(dataframe.mode().iloc[0])
 p("Factorizing the X")    
 # we need this list of original dtypes for the Autosklearn fit, create it before categorisation or split
