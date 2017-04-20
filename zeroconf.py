@@ -66,10 +66,11 @@ def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
     p("Constructing preprocessor pipeline and transforming sample data")
     # we don't care about the data here but need to preprocess, otherwise the classifiers crash
     default_cs = SimpleClassificationPipeline(
-                                        ).get_hyperparameter_search_space(
-#                            include={ 'imputation': 'most_frequent'
-#                                        , 'rescaling': 'standardize' }
-                                        ).get_default_configuration()
+        include={'imputation': ['most_frequent'],
+#                  'rescaling': ['standardize'] # https://github.com/automl/auto-sklearn/issues/245#issuecomment-295645056
+                }
+        ).get_hyperparameter_search_space().get_default_configuration()
+
     preprocessor = SimpleClassificationPipeline(default_cs, random_state=42)
     preprocessor.fit(X,y)
     X_tr,dummy = preprocessor.pre_transform(X,y)
@@ -169,12 +170,15 @@ def train_multicore(X, y, feat_type, pool_size=1, per_run_time_limit=60):
 
 filename = str(args.filename[0])
 dataframe = read_dataframe_h5(filename)
+
 p("Values of y "+str(dataframe['category'].unique())) 
 p("We need to protect NAs in y from the prediction dataset so we convert them to -1")
 dataframe['category'] = dataframe['category'].fillna(-1) 
 p("New values of y "+str(dataframe['category'].unique())) 
+
 p("Filling missing values in X with the most frequent values")
 dataframe = dataframe.fillna(dataframe.mode().iloc[0])
+
 p("Factorizing the X")    
 # we need this list of original dtypes for the Autosklearn fit, create it before categorisation or split
 col_dtype_dict = {c:( 'Numerical' if np.issubdtype(dataframe[c].dtype, np.number) else 'Categorical' )
@@ -187,8 +191,10 @@ col_dtype_dict = {c:( 'Numerical' if np.issubdtype(dataframe[c].dtype, np.number
 for c in dataframe.select_dtypes(exclude=[np.number]).columns:
     if c not in ['cust_id','category']:
         dataframe[c]=dataframe[c].astype('category').cat.codes
-df_unknown = dataframe[ dataframe.category == -1 ]  # 'None' gets categorzized into -1
-df_known = dataframe[ dataframe.category != -1 ] # preparing for multiclass labeling
+
+df_unknown = dataframe[ dataframe.category == -1 ] # 'None' gets categorzized into -1
+df_known   = dataframe[ dataframe.category != -1 ] # not [0,1] for multiclass labeling compartibility
+
 del dataframe
 
 X,y = x_y_dataframe_split(df_known)
@@ -249,7 +255,7 @@ print("\n"+"[ZEROCONF] "+"#"*72)
 p("The below scores are calculated for predicting '1' category value")
 print("[ZEROCONF] Precision: {0:2.0%}, Recall: {1:2.0%}, F1: {2:.2f}".format(
 precision_score(y_test, y_hat),recall_score(y_test, y_hat),f1_score(y_test, y_hat)))
-print("[ZEROCONF] Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall")
+p("Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall")
 p(confusion_matrix(y_test, y_hat))   
 baseline_1 = str(sum(a for a in y_test))
 baseline_all = str(len(y_test))
