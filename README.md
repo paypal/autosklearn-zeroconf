@@ -177,5 +177,8 @@ python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF
 ## Workarounds
 these are not related to the autosklearn-zeroconf or auto-sklearn but rather general issues depending on your python and OS installation
 ### xgboost installation can not find libraries
-search for them with <pre>sudo find / -name libgomp.so.1/usr/lib/x86_64-linux-gnu/libgomp.so.1</pre> and explicitly add them to the libraries path
+search for them with 
+<pre>sudo find / -name libgomp.so.1
+/usr/lib/x86_64-linux-gnu/libgomp.so.1</pre> 
+and explicitly add them to the libraries path
 <pre>export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libstdc++.so.6":"/usr/lib/x86_64-linux-gnu/libgomp.so.1"; python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF</pre>
