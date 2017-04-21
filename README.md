@@ -49,7 +49,8 @@ sudo apt-get update && sudo apt-get install git && git clone https://github.com/
 wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
 chmod u+x Anaconda3-Linux-x86_64.sh
 ./Anaconda3-Linux-x86_64.sh
-# A compiler is needed to compile a few things the from requirements.txt
+conda install libgcc
+# A compiler is also needed to compile a few things the from requirements.txt
 # Chose just the line for your Linux flavor below
 # On Ubuntu
 sudo apt-get install gcc build-essential
@@ -176,8 +177,12 @@ python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF
 
 ## Workarounds
 these are not related to the autosklearn-zeroconf or auto-sklearn but rather general issues depending on your python and OS installation
-### xgboost installation can not find libraries
-search for them with 
+### xgboost issues
+#### complains about ELF header
+<pre>pip uninstall xgboost; pip install --no-cache-dir -v xgboost==0.4a30</pre>
+#### can not find libraries
+<pre>conda install libgcc # for xgboost</pre>
+alternatively search for them with 
 <pre>sudo find / -name libgomp.so.1
 /usr/lib/x86_64-linux-gnu/libgomp.so.1</pre> 
 and explicitly add them to the libraries path
