@@ -133,7 +133,7 @@ def calculate_time_left_for_this_task(pool_size,per_run_time_limit):
     return time_left_for_this_task
 
 def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left_for_this_task, per_run_time_limit, feat_type):
-    c = AutoSklearnClassifier(time_left_for_this_task=time_left_for_this_task, per_run_time_limit=per_run_time_limit,
+    clf = AutoSklearnClassifier(time_left_for_this_task=time_left_for_this_task, per_run_time_limit=per_run_time_limit,
             ml_memory_limit=memory_limit,
             shared_mode=True, tmp_folder=atsklrn_tempdir, output_folder=atsklrn_tempdir,
             delete_tmp_folder_after_terminate=False, delete_output_folder_after_terminate=False,
@@ -142,7 +142,7 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
     sleep(seed)
     try:
         p("Starting seed="+str(seed))
-        c.fit(X_train, y_train, metric='f1_metric', feat_type=feat_type, dataset_name = dataset_name)
+        clf.fit(X_train, y_train, metric='f1_metric', feat_type=feat_type, dataset_name = dataset_name)
         p("####### Finished seed="+str(seed))
     except Exception:
         p("Exception in seed="+str(seed)+".  ")
@@ -181,16 +181,16 @@ dataframe = dataframe.fillna(dataframe.mode().iloc[0])
 
 p("Factorizing the X")    
 # we need this list of original dtypes for the Autosklearn fit, create it before categorisation or split
-col_dtype_dict = {c:( 'Numerical' if np.issubdtype(dataframe[c].dtype, np.number) else 'Categorical' )
-                                     for c in dataframe.columns if c not in ['cust_id','category']}
+col_dtype_dict = {col:( 'Numerical' if np.issubdtype(dataframe[col].dtype, np.number) else 'Categorical' )
+                                     for col in dataframe.columns if col not in ['cust_id','category']}
 
 # http://stackoverflow.com/questions/25530504/encoding-column-labels-in-pandas-for-machine-learning
 # http://stackoverflow.com/questions/24458645/label-encoding-across-multiple-columns-in-scikit-learn?rq=1
 # https://github.com/automl/auto-sklearn/issues/121#issuecomment-251459036
 
-for c in dataframe.select_dtypes(exclude=[np.number]).columns:
-    if c not in ['cust_id','category']:
-        dataframe[c]=dataframe[c].astype('category').cat.codes
+for col in dataframe.select_dtypes(exclude=[np.number]).columns:
+    if col not in ['cust_id','category']:
+        dataframe[col]=dataframe[col].astype('category').cat.codes
 
 df_unknown = dataframe[ dataframe.category == -1 ] # 'None' gets categorzized into -1
 df_known   = dataframe[ dataframe.category != -1 ] # not [0,1] for multiclass labeling compartibility
@@ -217,36 +217,43 @@ per_run_time_limit = max_estimators_fit_duration(X_train.values,y_train,max_clas
 p("per_run_time_limit="+str(per_run_time_limit))
 pool_size = define_pool_size(memory_limit)    
 p("Process pool size="+str(pool_size))
-feat_type= [col_dtype_dict[c] for c in X.columns]
+feat_type= [col_dtype_dict[col] for col in X.columns]
 p("Starting autosklearn classifiers fiting on a 67% sample up to 67k rows")
 train_multicore(X_train.values, y_train, feat_type, pool_size, per_run_time_limit)
 
-p("Building ensemble")
-seed = 1
-c = AutoSklearnClassifier(
-    time_left_for_this_task=300,per_run_time_limit=150,ml_memory_limit=20240,ensemble_size=50,ensemble_nbest=200,
-    shared_mode=True, tmp_folder=atsklrn_tempdir, output_folder=atsklrn_tempdir,
-    delete_tmp_folder_after_terminate=False, delete_output_folder_after_terminate=False,
-    initial_configurations_via_metalearning=0,
-    seed=seed)
-c.fit_ensemble(
-    task = BINARY_CLASSIFICATION
-    ,y = y_train
-    ,metric = F1_METRIC
-    ,precision = '32'
-    ,dataset_name = 'foobar' 
-    ,ensemble_size=10
-    ,ensemble_nbest=15)
+def zeroconf_fit_ensemble(y):
+    p("Building ensemble")
 
-sleep(20)
-p("Ensemble built")
+    seed = 1
 
-p("Show models")
-p(c.show_models())
+    ensemble = AutoSklearnClassifier(
+        time_left_for_this_task=300,per_run_time_limit=150,ml_memory_limit=20240,ensemble_size=50,ensemble_nbest=200,
+        shared_mode=True, tmp_folder=atsklrn_tempdir, output_folder=atsklrn_tempdir,
+        delete_tmp_folder_after_terminate=False, delete_output_folder_after_terminate=False,
+        initial_configurations_via_metalearning=0,
+        seed=seed)
+
+    ensemble.fit_ensemble(
+        task = BINARY_CLASSIFICATION
+        ,y = y
+        ,metric = F1_METRIC
+        ,precision = '32'
+        ,dataset_name = 'foobar' 
+        ,ensemble_size=10
+        ,ensemble_nbest=15)
+    
+    sleep(20)
+    p("Ensemble built")
+    
+    p("Show models")
+    p(str(ensemble.show_models()))
+    return ensemble
+
+ensemble=zeroconf_fit_ensemble(y_train)
 
 p("Validating")
 p("Predicting on validation set")
-y_hat = c.predict(X_test.values)
+y_hat = ensemble.predict(X_test.values)
 
 p("Accuracy score " + str(sklearn.metrics.accuracy_score(y_test, y_hat)))
 
@@ -267,55 +274,49 @@ if df_unknown.shape[0]==0: # if there is nothing to predict we can stop already
     p("##### Nothing to predict. Prediction dataset is empty. #####")
     exit(0)
 
-#p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
-#try:
-#    c.refit(X.copy().values, y)
-#except Exception as e:
-#    p("Refit failed, restarting")
-#    p(e)
-#    try:
-#        X2=X.copy().values
-#        indices = np.arange(X2.shape[0])
-#        np.random.shuffle(indices) # a workaround to algoritm shortcomings
-#        X2 = X2[indices]
-#        y = y[indices]
-#        c.refit(X2, y)
-#    except Exception as e:
-#        p("Second refit failed, exiting")
-#        p(e)
-#        exit(1)
-
-p(" WORKAROUND: because REfitting fails due to an upstream bug https://github.com/automl/auto-sklearn/issues/263")
-p(" WORKAROUND: we are fitting autosklearn classifiers a second time, now on the full dataset")
-train_multicore(X.values, y, feat_type, pool_size, per_run_time_limit)
-
-c.fit_ensemble(
-    task = BINARY_CLASSIFICATION
-    ,y = y_train
-    ,metric = F1_METRIC
-    ,precision = '32'
-    ,dataset_name = 'foobar'
-    ,ensemble_size=10
-    ,ensemble_nbest=15)
-
-sleep(20)
-p("Ensemble built")
-
-p("Show models")
-p(c.show_models())
-
 X_unknown,y_unknown,row_id_unknown = x_y_dataframe_split(df_unknown, id=True) 
+
+p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
+try:
+    ensemble.refit(X.copy().values, y)
+except Exception as e:
+    p("Refit failed, reshuffling the rows, restarting")
+    p(e)
+    try:
+        X2=X.copy().values
+        indices = np.arange(X2.shape[0])
+        np.random.shuffle(indices) # a workaround to algoritm shortcomings
+        X2 = X2[indices]
+        y = y[indices]
+        ensemble.refit(X2, y)
+    except Exception as e:
+        p("Second refit failed")
+        p(e)
+        p(" WORKAROUND: because REfitting fails due to an upstream bug https://github.com/automl/auto-sklearn/issues/263")
+        p(" WORKAROUND: we are fitting autosklearn classifiers a second time, now on the full dataset")
+        train_multicore(X.values, y, feat_type, pool_size, per_run_time_limit)
+        ensemble=zeroconf_fit_ensemble(y_train)
+    
 p("Predicting. This can take a long time for a large prediction set.")
 try:
-    pass
-    y_pred = c.predict(X_unknown.copy().values)
+    y_pred = ensemble.predict(X_unknown.copy().values)
+    p("Prediction done")
 except Exception as e:
-    p("##### Prediction failed, exiting! #####")
     p(e)
-    exit(2)
-
-p("Prediction done")
-
+    p(" WORKAROUND: because REfitting fails due to an upstream bug https://github.com/automl/auto-sklearn/issues/263")
+    p(" WORKAROUND: we are fitting autosklearn classifiers a second time, now on the full dataset")
+    train_multicore(X.values, y, feat_type, pool_size, per_run_time_limit)
+    ensemble=zeroconf_fit_ensemble(y_train)
+    p("Predicting. This can take a long time for a large prediction set.")
+    try:
+        y_pred = ensemble.predict(X_unknown.copy().values)
+        p("Prediction done")
+    except Exception as e:
+        p("##### Prediction failed, exiting! #####")
+        p(e)
+        exit(2)
+    
+    
 result_df = pd.DataFrame({'cust_id':row_id_unknown,'prediction':pd.Series(y_pred,index=row_id_unknown.index)})
 p("Exporting the data")
 result_df.to_csv(result_filename, index=False, header=True) 
