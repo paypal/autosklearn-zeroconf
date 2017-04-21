@@ -39,6 +39,7 @@ shutil.rmtree(atsklrn_tempdir,ignore_errors=True) # cleanup - remove temp direct
 memory_limit = 15000 # MB
 global max_classifier_time_budget
 max_classifier_time_budget = 1200 # but 10 minutes is usually more than enough
+max_sample_size=100000 # so that the classifiers fit method completes in a reasonable time  
 
 def p(text):
     for line in str(text).splitlines():
@@ -194,25 +195,22 @@ for c in dataframe.select_dtypes(exclude=[np.number]).columns:
 df_unknown = dataframe[ dataframe.category == -1 ] # 'None' gets categorzized into -1
 df_known   = dataframe[ dataframe.category != -1 ] # not [0,1] for multiclass labeling compartibility
 
-print(df_known)
-print(df_unknown)
 del dataframe
 
 X,y = x_y_dataframe_split(df_known)
 
 p("Preparing a sample to measure approx classifier run time and select features")
-max_sample_size=100000 # so that the classifiers fit method completes in a reasonable time  
 dataset_size=df_known.shape[0]
 
 if dataset_size > max_sample_size :
     sample_factor = dataset_size/float(max_sample_size)
     p("Sample factor ="+str(sample_factor))
     X_sample,y_sample = x_y_dataframe_split(df_known.sample(max_sample_size,random_state=42))
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=33000, random_state=42) # no need for larger test
+    X_train, X_test, y_train, y_test = train_test_split(X.copy(), y, stratify=y, test_size=33000, random_state=42) # no need for larger test
 else :
     sample_factor = 1
-    X_sample,y_sample = X,y  
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.33, random_state=42)
+    X_sample,y_sample = X.copy(),y  
+    X_train, X_test, y_train, y_test = train_test_split(X.copy(), y, stratify=y, test_size=0.33, random_state=42)
 p("Reserved 33% of the training dataset for validation (upto 33k rows)")
 
 per_run_time_limit = max_estimators_fit_duration(X_train.values,y_train,max_classifier_time_budget,sample_factor)
@@ -220,7 +218,7 @@ p("per_run_time_limit="+str(per_run_time_limit))
 pool_size = define_pool_size(memory_limit)    
 p("Process pool size="+str(pool_size))
 feat_type= [col_dtype_dict[c] for c in X.columns]
-p("Starting autosklearn classifiers fiting")
+p("Starting autosklearn classifiers fiting on a 67% sample up to 67k rows")
 train_multicore(X_train.values, y_train, feat_type, pool_size, per_run_time_limit)
 
 p("Building ensemble")
@@ -269,28 +267,47 @@ if df_unknown.shape[0]==0: # if there is nothing to predict we can stop already
     p("##### Nothing to predict. Prediction dataset is empty. #####")
     exit(0)
 
-p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
-try:
-    c.refit(X.copy().values, y)
-except Exception as e:
-    p("Refit failed, restarting")
-    p(e)
-    try:
-        X=X.copy().values
-        indices = np.arange(X.shape[0])
-        np.random.shuffle(indices)
-        X = X[indices]
-        y = y[indices]
-        c.refit(X, y)
-    except Exception as e:
-        p("Second refit failed, exiting")
-        p(e)
-        exit(1)
+#p("Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.")
+#try:
+#    c.refit(X.copy().values, y)
+#except Exception as e:
+#    p("Refit failed, restarting")
+#    p(e)
+#    try:
+#        X2=X.copy().values
+#        indices = np.arange(X2.shape[0])
+#        np.random.shuffle(indices) # a workaround to algoritm shortcomings
+#        X2 = X2[indices]
+#        y = y[indices]
+#        c.refit(X2, y)
+#    except Exception as e:
+#        p("Second refit failed, exiting")
+#        p(e)
+#        exit(1)
 
+p(" WORKAROUND: because REfitting fails due to an upstream bug https://github.com/automl/auto-sklearn/issues/263")
+p(" WORKAROUND: we are fitting autosklearn classifiers a second time, now on the full dataset")
+train_multicore(X.values, y, feat_type, pool_size, per_run_time_limit)
+
+c.fit_ensemble(
+    task = BINARY_CLASSIFICATION
+    ,y = y_train
+    ,metric = F1_METRIC
+    ,precision = '32'
+    ,dataset_name = 'foobar'
+    ,ensemble_size=10
+    ,ensemble_nbest=15)
+
+sleep(20)
+p("Ensemble built")
+
+p("Show models")
+p(c.show_models())
 
 X_unknown,y_unknown,row_id_unknown = x_y_dataframe_split(df_unknown, id=True) 
 p("Predicting. This can take a long time for a large prediction set.")
 try:
+    pass
     y_pred = c.predict(X_unknown.copy().values)
 except Exception as e:
     p("##### Prediction failed, exiting! #####")
