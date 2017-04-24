@@ -10,8 +10,7 @@ import pandas as pd
 # Dowlnoad these files from Kaggle dataset
 # wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
 # wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test
-train = pd.read_csv(filepath_or_buffer='adult.data',sep=',', error_bad_lines=False, index_col=False)
-columns=[
+col_names=[
 'age',
 'workclass',
 'fnlwgt',
@@ -28,22 +27,34 @@ columns=[
 'native-country',
 'category'
 ]
-train.columns=columns
-train['cust_id']=train.index
+
+train = pd.read_csv(filepath_or_buffer='adult.data',sep=',', error_bad_lines=False, index_col=False, names=col_names)
+train['set_name']='train'
 category_mapping={' >50K':1,' <=50K':0}
 train['category']= train['category'].map(category_mapping) 
-#test = pd.read_csv(filepath_or_buffer='adult.test',sep=',', error_bad_lines=False, index_col=False)
-print(train)
-#exit()
-# We will use the test.csv data to make a prediction. You can compare the predicted values with the ground truth yourself.
-#test['Survived']=None # The empty target column tells autosklearn-zeroconf to use these cases for the prediction
+#dataframe=train
 
-#dataframe=train.append(test)
+test = pd.read_csv(filepath_or_buffer='adult.test',sep=',', error_bad_lines=False, index_col=False, names=col_names, skiprows=1)
+test['set_name']='test'
+category_mapping={' >50K.':1,' <=50K.':0}
+test['category']= test['category'].map(category_mapping) 
+
+dataframe=train.append(test)
 
 # autosklearn-zeroconf requires cust_id and category (target or "y" variable) columns, the rest is optional
-#dataframe.rename(columns = {'PassengerId':'cust_id','Survived':'category'},inplace=True)
-dataframe=train
+dataframe['cust_id']=dataframe.index
+
+# let's save the test with the cus_id and binarized category for the validation of the prediction afterwards
+test_df=dataframe.loc[dataframe['set_name']=='test'].drop(['set_name'], axis=1)
+test_df.to_csv('adult.test.withid', index=False, header=True)
+
+# We will use the test.csv data to make a prediction. You can compare the predicted values with the ground truth yourself.
+dataframe.loc[dataframe['set_name']=='test','category']=None
+dataframe=dataframe.drop(['set_name'], axis=1)
+
+print(dataframe)
+
 store = pd.HDFStore('Adult.h5') # this is the file cache for the data
 store['data'] = dataframe
 store.close()
-#Now run 'python zeroconf.py Titanic.h5' (python >=3.5)
+#Now run 'python zeroconf.py Adult.h5' (python >=3.5)
