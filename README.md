@@ -27,7 +27,7 @@ plus samplers, scalers, imputers (14 feature processing methods, and 3 data prep
 methods,  giving  rise  to  a  structured  hypothesis  space  with  100+  hyperparameters)
 
 ## Running autosklearn-zeroconf
-To run autosklearn-zeroconf start '''python zeroconf.py your_dataframe.h5 2>/dev/null|grep ZEROCONF''' from command line.
+To run autosklearn-zeroconf start <pre>python zeroconf.py your_dataframe.h5 2>/dev/null|grep ZEROCONF</pre> from command line.
 The script was tested on Ubuntu and RedHat. It won't work on any WindowsOS because auto-sklearn doesn't support Windows.
 
 ## Data Format
@@ -35,9 +35,9 @@ The code uses a pandas dataframe format to manage the data. It is stored in the 
 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
-'''python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF'''
+<pre>python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF</pre>
 And then to evaluate the prediction stored in zerconf-result.csv against the test dataset file adult.test.withid 
-'''python evaluate-dataset-Adult.py'''
+<pre>python evaluate-dataset-Adult.py</pre>
 
 ## Installation
 The script itself needs no installation, just copy it with the rest of the files in your working directory.
@@ -70,7 +70,7 @@ autosklearn-zeroconf is licensed under the [BSD 3-Clause License (Revised)](LICE
 
 ## Example of the output
 <pre>
-python zeroconf.py Adult.h5 2>&1|grep ZEROCONF
+python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF
 [ZEROCONF] Read dataset from the store # 00:31:12 #
 [ZEROCONF] Values of y [  0.   1.  nan] # 00:31:12 #
 [ZEROCONF] We need to protect NAs in y from the prediction dataset so we convert them to -1 # 00:31:12 #
