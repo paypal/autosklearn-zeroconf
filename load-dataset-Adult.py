@@ -7,7 +7,6 @@ This is an example on how to prepare data for autosklearn-zeroconf.
 It is using a well known Adult (Salary) dataset from UCI https://archive.ics.uci.edu/ml/datasets/Adult .
 """
 import pandas as pd
-# Dowlnoad these files from Kaggle dataset
 # wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
 # wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test
 col_names=[
