@@ -43,7 +43,7 @@ max_sample_size=100000 # so that the classifiers fit method completes in a reaso
 
 def p(text):
     for line in str(text).splitlines():
-        print ('[ZEROCONF] '+line+" # "+strftime("%H:%M")+" #")
+        print ('[ZEROCONF] '+line+" # "+strftime("%H:%M:%S")+" #")
 
 def time_single_estimator(clf_name, clf_class, X, y, max_clf_time):
     if ('libsvm_svc' == clf_name  # doesn't even scale to a 100k rows
@@ -73,7 +73,7 @@ def max_estimators_fit_duration(X,y,max_classifier_time_budget,sample_factor=1):
     pipeline = pipeline.set_hyperparameters(default_cs)
     
     pipeline.fit(X, y)
-    X_tr, dummy = pipeline.pre_transform(X, y)
+    X_tr, dummy = pipeline.fit_transformer(X, y)
 
     p("Running estimators on the sample")
     # going over all default classifiers used by auto-sklearn
@@ -142,7 +142,7 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
     sleep(seed)
     try:
         p("Starting seed="+str(seed))
-        clf.fit(X_train, y_train, metric='f1_metric', feat_type=feat_type, dataset_name = dataset_name)
+        clf.fit(X_train, y_train, metric=autosklearn.metrics.f1, feat_type=feat_type, dataset_name = dataset_name)
         p("####### Finished seed="+str(seed))
     except Exception:
         p("Exception in seed="+str(seed)+".  ")
@@ -236,7 +236,7 @@ def zeroconf_fit_ensemble(y):
     ensemble.fit_ensemble(
         task = BINARY_CLASSIFICATION
         ,y = y
-        ,metric = F1_METRIC
+        ,metric = autosklearn.metrics.f1
         ,precision = '32'
         ,dataset_name = 'foobar' 
         ,ensemble_size=10
@@ -255,20 +255,21 @@ p("Validating")
 p("Predicting on validation set")
 y_hat = ensemble.predict(X_test.values)
 
-p("Accuracy score " + str(sklearn.metrics.accuracy_score(y_test, y_hat)))
-
-print("\n"+"[ZEROCONF] "+"#"*72)
+p("\n")
+p("#"*72)
+p("Accuracy score {0:2.0%}".format(accuracy_score(y_test, y_hat)))
 p("The below scores are calculated for predicting '1' category value")
-print("[ZEROCONF] Precision: {0:2.0%}, Recall: {1:2.0%}, F1: {2:.2f}".format(
+p("Precision: {0:2.0%}, Recall: {1:2.0%}, F1: {2:.2f}".format(
 precision_score(y_test, y_hat),recall_score(y_test, y_hat),f1_score(y_test, y_hat)))
 p("Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall")
-p(confusion_matrix(y_test, y_hat))   
+p(confusion_matrix(y_test, y_hat))
 baseline_1 = str(sum(a for a in y_test))
 baseline_all = str(len(y_test))
-baseline_prcnt = "{0:2.0%}".format( float(sum(a for a in y_test)/len(y_test))) 
-print ("[ZEROCONF] Baseline %s positives from %s overall = %1.1f%%" %
+baseline_prcnt = "{0:2.0%}".format( float(sum(a for a in y_test)/len(y_test)))
+p("Baseline %s positives from %s overall = %1.1f%%" %
 (sum(a for a in y_test), len(y_test), 100*sum(a for a in y_test)/len(y_test)))
-print("\n"+"[ZEROCONF] "+"#"*72)
+p("#"*72)
+p("\n")
 
 if df_unknown.shape[0]==0: # if there is nothing to predict we can stop already
     p("##### Nothing to predict. Prediction dataset is empty. #####")
