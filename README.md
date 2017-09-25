@@ -36,8 +36,6 @@ The code uses a pandas dataframe format to manage the data. It is stored in the 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
 <pre>
-wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data
-wget https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.test
 python zeroconf-load-dataset-Adult.py
 python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF
 </pre>
