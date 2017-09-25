@@ -48,20 +48,28 @@ sudo apt-get update && sudo apt-get install git && git clone https://github.com/
 
 ### Install auto-sklearn
 <pre>
-# If you have no Python environment installed install Anaconda.
+# A compiler (gcc) is needed to compile a few things the from auto-sklearn requirements.txt
+# Chose just the line for your Linux flavor below
+# On Ubuntu
+sudo apt-get install gcc build-essential swig
+# On RedHat
+yum -y groupinstall 'Development Tools'
+# if you want to use virtual environments
+pip install virtualenv
+virtualenv zeroconf -p /usr/bin/python3.5
+source zeroconf/bin/activate
+# requirements for auto-sklearn
+curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
+# requrements for zeroconf
+curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+</pre>
+
+<pre>
+# If you have no Python environment installed, install Anaconda.
 wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
 chmod u+x Anaconda3-Linux-x86_64.sh
 ./Anaconda3-Linux-x86_64.sh
 conda install libgcc
-# A compiler is also needed to compile a few things the from requirements.txt
-# Chose just the line for your Linux flavor below
-# On Ubuntu
-sudo apt-get install gcc build-essential
-# On RedHat
-yum -y groupinstall 'Development Tools'
-
-curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
-pip install auto-sklearn
 
 </pre>
 
