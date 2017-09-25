@@ -1,4 +1,4 @@
 bunch
 psutil
 tables
-auto-sklearn=0.2.1
+auto-sklearn==0.2.1
