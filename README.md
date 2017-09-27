@@ -44,36 +44,15 @@ And then to evaluate the prediction stored in zerconf-result.csv against the tes
 
 ## Installation
 The script itself needs no installation, just copy it with the rest of the files in your working directory.
-Alternatively you could use git clone
+Software requrements are here https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt
+### Happy path installation on Ubuntu 16.04LTS
 <pre>
-sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
-</pre>
-
-### Install auto-sklearn
-<pre>
-# A compiler (gcc) is needed to compile a few things the from auto-sklearn requirements.txt
-# Chose just the line for your Linux flavor below
-# On Ubuntu
-sudo apt-get install gcc build-essential swig
-# On RedHat
-yum -y groupinstall 'Development Tools'
-# if you want to use virtual environments
+sudo apt-get update && sudo apt-get install git gcc build-essential swig
+git clone https://github.com/paypal/autosklearn-zeroconf.git
 pip install virtualenv
 virtualenv zeroconf -p /usr/bin/python3.5
 source zeroconf/bin/activate
-# requirements for auto-sklearn
-curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
-# requrements for zeroconf
 curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
-</pre>
-
-<pre>
-# If you have no Python environment installed, install Anaconda.
-wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
-chmod u+x Anaconda3-Linux-x86_64.sh
-./Anaconda3-Linux-x86_64.sh
-conda install libgcc
-
 </pre>
 
 ## License
@@ -232,3 +211,37 @@ alternatively search for them with
 and explicitly add them to the libraries path
 <pre>export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libstdc++.so.6":"/usr/lib/x86_64-linux-gnu/libgomp.so.1"; python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF</pre>
 Also see https://github.com/automl/auto-sklearn/issues/247
+### Install auto-sklearn
+<pre>
+# A compiler (gcc) is needed to compile a few things the from auto-sklearn requirements.txt
+# Chose just the line for your Linux flavor below
+# On Ubuntu
+sudo apt-get install gcc build-essential swig
+# On Centos 
+sudo yum -y update 
+sudo reboot
+sudo yum install epel-release python34 python34-devel python34-setuptools
+yum -y groupinstall 'Development Tools'
+# auto-sklearn requires swig 3.0 
+curl https://downloads.sourceforge.net/swig/swig-3.0.12.tar.gz
+tar xf swig-3.0.12.tar.gz 
+cd swig-3.0.12 
+./configure --without-pcre
+make
+sudo make install
+cd ..
+sudo easy_install-3.4 pip
+# if you want to use virtual environments
+sudo pip3 install virtualenv
+virtualenv zeroconf -p /usr/bin/python3.4
+source zeroconf/bin/activate
+curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+</pre>
+
+<pre>
+# If you have no Python environment installed, install Anaconda.
+wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
+chmod u+x Anaconda3-Linux-x86_64.sh
+./Anaconda3-Linux-x86_64.sh
+conda install libgcc
+</pre>
