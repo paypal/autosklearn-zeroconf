@@ -217,7 +217,7 @@ Also see https://github.com/automl/auto-sklearn/issues/247
 # Chose just the line for your Linux flavor below
 # On Ubuntu
 sudo apt-get install gcc build-essential swig
-# On Centos 
+# On CentOS 7-1611 http://www.osboxes.org/centos/ https://drive.google.com/file/d/0B_HAFnYs6Ur-bl8wUWZfcHVpMm8/view?usp=sharing
 sudo yum -y update 
 sudo reboot
 sudo yum install epel-release python34 python34-devel python34-setuptools
