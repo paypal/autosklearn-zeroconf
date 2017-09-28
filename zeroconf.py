@@ -16,7 +16,7 @@ import autosklearn.pipeline.components.classification
 from autosklearn.pipeline.classification import SimpleClassificationPipeline
 from autosklearn.constants import *
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import sklearn.metrics
 from sklearn.metrics import (confusion_matrix, precision_score
 , recall_score, f1_score, accuracy_score)
