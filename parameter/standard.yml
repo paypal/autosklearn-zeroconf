@@ -1,0 +1,8 @@
+basedir: /home/ulrich/PycharmProjects/autosklearn-zeroconf
+resultfile: ./data/zeroconf-result.csv
+memory_limit: 15000  # MB
+max_classifier_time_budget: 1200  # but 10 minutes is usually more than enough
+max_sample_size: 100000  # so that the classifiers fit method completes in a reasonable time
+# definition of dataset fields
+id_field: cust_id # has to be ignored by the analysis
+target_field: category # name of the field with the target variable
