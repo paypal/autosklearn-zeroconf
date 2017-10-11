@@ -35,24 +35,35 @@ The code uses a pandas dataframe format to manage the data. It is stored in the 
 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
-<pre>
-python zeroconf-load-dataset-Adult.py
-python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF
-</pre>
+<pre>python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF</pre>
 And then to evaluate the prediction stored in zerconf-result.csv against the test dataset file adult.test.withid 
 <pre>python evaluate-dataset-Adult.py</pre>
 
 ## Installation
 The script itself needs no installation, just copy it with the rest of the files in your working directory.
-Software requrements are here https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt
-### Happy path installation on Ubuntu 16.04LTS
+Alternatively you could use git clone
 <pre>
-sudo apt-get update && sudo apt-get install git gcc build-essential swig
-git clone https://github.com/paypal/autosklearn-zeroconf.git
-pip install virtualenv
-virtualenv zeroconf -p /usr/bin/python3.5
-source zeroconf/bin/activate
-curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
+</pre>
+
+### Install auto-sklearn
+<pre>
+# If you have no Python environment installed install Anaconda.
+wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
+chmod u+x Anaconda3-Linux-x86_64.sh
+./Anaconda3-Linux-x86_64.sh
+conda install libgcc
+# A compiler is also needed to compile a few things the from requirements.txt
+# Chose just the line for your Linux flavor below
+# On Ubuntu
+sudo apt-get install gcc build-essential
+# On RedHat
+yum -y groupinstall 'Development Tools'
+
+curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
+pip install auto-sklearn
+pip install ruamel.yaml
+
 </pre>
 
 ## License
@@ -60,128 +71,135 @@ autosklearn-zeroconf is licensed under the [BSD 3-Clause License (Revised)](LICE
 
 ## Example of the output
 <pre>
-python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF
-[ZEROCONF] Read dataset from the store # 00:31:12 #
-[ZEROCONF] Values of y [  0.   1.  nan] # 00:31:12 #
-[ZEROCONF] We need to protect NAs in y from the prediction dataset so we convert them to -1 # 00:31:12 #
-[ZEROCONF] New values of y [ 0.  1. -1.] # 00:31:12 #
-[ZEROCONF] Filling missing values in X with the most frequent values # 00:31:12 #
-[ZEROCONF] Factorizing the X # 00:31:12 #
-[ZEROCONF] Dataframe split into X and y # 00:31:12 #
-[ZEROCONF] Preparing a sample to measure approx classifier run time and select features # 00:31:12 #
-[ZEROCONF] Reserved 33% of the training dataset for validation (upto 33k rows) # 00:31:12 #
-[ZEROCONF] Constructing preprocessor pipeline and transforming sample data # 00:31:12 #
-[ZEROCONF] Running estimators on the sample # 00:31:14 #
-[ZEROCONF] bernoulli_nb starting # 00:31:14 #
-[ZEROCONF] bernoulli_nb training time: 0.03244924545288086 # 00:31:14 #
-[ZEROCONF] decision_tree starting # 00:31:14 #
-[ZEROCONF] decision_tree training time: 0.02585911750793457 # 00:31:14 #
-[ZEROCONF] gaussian_nb starting # 00:31:14 #
-[ZEROCONF] gaussian_nb training time: 0.03680753707885742 # 00:31:14 #
-[ZEROCONF] multinomial_nb starting # 00:31:14 #
-[ZEROCONF] multinomial_nb training time: 0.06878280639648438 # 00:31:15 #
-[ZEROCONF] lda starting # 00:31:14 #
-[ZEROCONF] lda training time: 0.09616875648498535 # 00:31:14 #
-[ZEROCONF] liblinear_svc starting # 00:31:14 #
-[ZEROCONF] liblinear_svc training time: 0.17355084419250488 # 00:31:15 #
-[ZEROCONF] passive_aggressive starting # 00:31:14 #
-[ZEROCONF] passive_aggressive training time: 0.28772568702697754 # 00:31:15 #
-[ZEROCONF] sgd starting # 00:31:14 #
-[ZEROCONF] sgd training time: 0.421036958694458 # 00:31:15 #
-[ZEROCONF] k_nearest_neighbors starting # 00:31:14 #
-[ZEROCONF] k_nearest_neighbors training time: 0.9100713729858398 # 00:31:15 #
-[ZEROCONF] adaboost starting # 00:31:14 #
-[ZEROCONF] adaboost training time: 1.1881482601165771 # 00:31:15 #
-[ZEROCONF] xgradient_boosting starting # 00:31:15 #
-[ZEROCONF] xgradient_boosting training time: 1.625457525253296 # 00:31:16 #
-[ZEROCONF] extra_trees starting # 00:31:14 #
-[ZEROCONF] extra_trees training time: 2.7511496543884277 # 00:31:17 #
-[ZEROCONF] random_forest starting # 00:31:14 #
-[ZEROCONF] random_forest training time: 2.8738672733306885 # 00:31:17 #
-[ZEROCONF] gradient_boosting starting # 00:31:14 #
-[ZEROCONF] gradient_boosting training time: 4.22829008102417 # 00:31:19 #
-[ZEROCONF] Test classifier fit completed # 00:31:19 #
-[ZEROCONF] per_run_time_limit=4 # 00:31:19 #
-[ZEROCONF] Process pool size=2 # 00:31:19 #
-[ZEROCONF] Starting autosklearn classifiers fiting on a 67% sample up to 67k rows # 00:31:19 #
-[ZEROCONF] Max time allowance for a model 1 minute(s) # 00:31:19 #
-[ZEROCONF] Overal run time is about 8 minute(s) # 00:31:19 #
-[ZEROCONF] Starting seed=2 # 00:31:21 #
-[ZEROCONF] Starting seed=3 # 00:31:22 #
-[ZEROCONF] ####### Finished seed=2 # 00:34:35 #
-[ZEROCONF] ####### Finished seed=3 # 00:34:38 #
-[ZEROCONF] Multicore fit completed # 00:34:38 #
-[ZEROCONF] Building ensemble # 00:34:38 #
-[ZEROCONF] Ensemble built # 00:35:00 #
-[ZEROCONF] Show models # 00:35:00 #
-[ZEROCONF] [(0.300000, SimpleClassificationPipeline({'classifier:random_forest:n_estimators': 100, 'preprocessor:select_percentile_classification:percentile': 50.0, 'preprocessor:__choice__': 'select_percentile_classification', 'classifier:random_forest:criterion': 'entropy', 'classifier:random_forest:min_samples_leaf': 6, 'preprocessor:select_percentile_classification:score_func': 'chi2', 'classifier:random_forest:max_features': 4.839202954184717, 'balancing:strategy': 'weighting', 'imputation:strategy': 'mean', 'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_depth': 'None', 'rescaling:__choice__': 'minmax', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_samples_split': 6, 'classifier:random_forest:bootstrap': 'True'}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] (0.200000, SimpleClassificationPipeline({'classifier:xgradient_boosting:scale_pos_weight': 1, 'classifier:xgradient_boosting:n_estimators': 342, 'one_hot_encoding:minimum_fraction': 0.2547323861133189, 'classifier:xgradient_boosting:max_depth': 3, 'preprocessor:__choice__': 'no_preprocessing', 'balancing:strategy': 'none', 'rescaling:__choice__': 'minmax', 'imputation:strategy': 'median', 'classifier:xgradient_boosting:learning_rate': 0.04534535307037642, 'classifier:xgradient_boosting:reg_lambda': 1, 'classifier:xgradient_boosting:colsample_bylevel': 1, 'classifier:xgradient_boosting:max_delta_step': 0, 'classifier:xgradient_boosting:subsample': 0.6025298628426271, 'classifier:__choice__': 'xgradient_boosting', 'classifier:xgradient_boosting:reg_alpha': 0, 'classifier:xgradient_boosting:gamma': 0, 'classifier:xgradient_boosting:colsample_bytree': 1, 'one_hot_encoding:use_minimum_fraction': 'True', 'classifier:xgradient_boosting:base_score': 0.5, 'classifier:xgradient_boosting:min_child_weight': 10}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] (0.200000, SimpleClassificationPipeline({'classifier:random_forest:n_estimators': 100, 'preprocessor:__choice__': 'no_preprocessing', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:min_samples_leaf': 6, 'classifier:random_forest:max_features': 1.9992029381707617, 'balancing:strategy': 'weighting', 'imputation:strategy': 'mean', 'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_depth': 'None', 'rescaling:__choice__': 'minmax', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_samples_split': 8, 'classifier:random_forest:bootstrap': 'True'}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] (0.100000, SimpleClassificationPipeline({'classifier:random_forest:n_estimators': 100, 'one_hot_encoding:minimum_fraction': 0.010000000000000004, 'preprocessor:__choice__': 'no_preprocessing', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:min_samples_leaf': 1, 'classifier:random_forest:max_features': 1.0, 'balancing:strategy': 'none', 'imputation:strategy': 'mean', 'one_hot_encoding:use_minimum_fraction': 'True', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_depth': 'None', 'rescaling:__choice__': 'minmax', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_samples_split': 8, 'classifier:random_forest:bootstrap': 'True'}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] (0.100000, SimpleClassificationPipeline({'classifier:random_forest:n_estimators': 100, 'preprocessor:__choice__': 'no_preprocessing', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:min_samples_leaf': 6, 'classifier:random_forest:max_features': 3.718593691792686, 'balancing:strategy': 'weighting', 'imputation:strategy': 'mean', 'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_depth': 'None', 'rescaling:__choice__': 'minmax', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_samples_split': 8, 'classifier:random_forest:bootstrap': 'True'}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] (0.100000, SimpleClassificationPipeline({'classifier:random_forest:n_estimators': 100, 'preprocessor:__choice__': 'no_preprocessing', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:min_samples_leaf': 6, 'classifier:random_forest:max_features': 3.6470980321678206, 'balancing:strategy': 'weighting', 'imputation:strategy': 'mean', 'one_hot_encoding:use_minimum_fraction': 'False', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'classifier:random_forest:max_depth': 'None', 'rescaling:__choice__': 'minmax', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_samples_split': 6, 'classifier:random_forest:bootstrap': 'True'}, # 00:35:00 #
-[ZEROCONF] dataset_properties={ # 00:35:00 #
-[ZEROCONF]   'task': 1, # 00:35:00 #
-[ZEROCONF]   'multilabel': False, # 00:35:00 #
-[ZEROCONF]   'target_type': 'classification', # 00:35:00 #
-[ZEROCONF]   'signed': False, # 00:35:00 #
-[ZEROCONF]   'multiclass': False, # 00:35:00 #
-[ZEROCONF]   'sparse': False})), # 00:35:00 #
-[ZEROCONF] ] # 00:35:00 #
-[ZEROCONF] Validating # 00:35:00 #
-[ZEROCONF] Predicting on validation set # 00:35:00 #
-[ZEROCONF]  # 00:35:02 #
-[ZEROCONF] ######################################################################## # 00:35:02 #
-[ZEROCONF] Accuracy score 85% # 00:35:02 #
-[ZEROCONF] The below scores are calculated for predicting '1' category value # 00:35:02 #
-[ZEROCONF] Precision: 65%, Recall: 80%, F1: 0.71 # 00:35:02 #
-[ZEROCONF] Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall # 00:35:02 #
-[ZEROCONF] [[7026 1132] # 00:35:02 #
-[ZEROCONF]  [ 528 2060]] # 00:35:02 #
-[ZEROCONF] Baseline 2588 positives from 10746 overall = 24.1% # 00:35:02 #
-[ZEROCONF] ######################################################################## # 00:35:02 #
-[ZEROCONF]  # 00:35:02 #
-[ZEROCONF] Dataframe split into X and y # 00:35:02 #
-[ZEROCONF] Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time. # 00:35:02 #
-[ZEROCONF] Predicting. This can take a long time for a large prediction set. # 00:35:50 #
-[ZEROCONF] Prediction done # 00:35:54 #
-[ZEROCONF] Exporting the data # 00:35:54 #
-[ZEROCONF] ##### Zeroconf Script Completed! ##### # 00:35:54 #
+python zeroconf.py -d ../data/Adult.h5 2>/dev/null | grep [ZEROCONF]
+
+2017-10-11 10:52:15,893 - [ZEROCONF] - zeroconf.py - INFO - Program Call Parameter (Arguments and Parameter File Values):
+2017-10-11 10:52:15,893 - [ZEROCONF] - zeroconf.py - INFO -    basedir: /home/ulrich/PycharmProjects/autosklearn-zeroconf
+2017-10-11 10:52:15,893 - [ZEROCONF] - zeroconf.py - INFO -    data_file: /home/ulrich/PycharmProjects/autosklearn-zeroconf/data/Adult.h5
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    id_field: cust_id
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    max_classifier_time_budget: 1200
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    max_sample_size: 100000
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    memory_limit: 15000
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    parameter_file: /home/ulrich/PycharmProjects/autosklearn-zeroconf/parameter/default.yml
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    proc: zeroconf.py
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    resultfile: /home/ulrich/PycharmProjects/autosklearn-zeroconf/data/zeroconf-result.csv
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    runid: 20171011105215
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    runtype: Fresh Run Start
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    target_field: category
+2017-10-11 10:52:15,894 - [ZEROCONF] - zeroconf.py - INFO -    workdir: /home/ulrich/PycharmProjects/autosklearn-zeroconf/work/20171011105215
+2017-10-11 10:52:15,944 - [ZEROCONF] - zeroconf.py - INFO - Read dataset from the store
+2017-10-11 10:52:15,945 - [ZEROCONF] - zeroconf.py - INFO - Values of y [  0.   1.  nan]
+2017-10-11 10:52:15,945 - [ZEROCONF] - zeroconf.py - INFO - We need to protect NAs in y from the prediction dataset so we convert them to -1
+2017-10-11 10:52:15,946 - [ZEROCONF] - zeroconf.py - INFO - New values of y [ 0.  1. -1.]
+2017-10-11 10:52:15,946 - [ZEROCONF] - zeroconf.py - INFO - Filling missing values in X with the most frequent values
+2017-10-11 10:52:16,043 - [ZEROCONF] - zeroconf.py - INFO - Factorizing the X
+2017-10-11 10:52:16,176 - [ZEROCONF] - x_y_dataframe_split - INFO - Dataframe split into X and y
+2017-10-11 10:52:16,178 - [ZEROCONF] - zeroconf.py - INFO - Preparing a sample to measure approx classifier run time and select features
+2017-10-11 10:52:16,191 - [ZEROCONF] - zeroconf.py - INFO - train size:21815
+2017-10-11 10:52:16,191 - [ZEROCONF] - zeroconf.py - INFO - test size:10746
+2017-10-11 10:52:16,192 - [ZEROCONF] - zeroconf.py - INFO - Reserved 33% of the training dataset for validation (upto 33k rows)
+2017-10-11 10:52:16,209 - [ZEROCONF] - max_estimators_fit_duration - INFO - Constructing preprocessor pipeline and transforming sample data
+2017-10-11 10:52:18,712 - [ZEROCONF] - max_estimators_fit_duration - INFO - Running estimators on the sample
+2017-10-11 10:52:18,729 - [ZEROCONF] - zeroconf.py - INFO - adaboost starting
+2017-10-11 10:52:18,734 - [ZEROCONF] - zeroconf.py - INFO - bernoulli_nb starting
+2017-10-11 10:52:18,761 - [ZEROCONF] - zeroconf.py - INFO - extra_trees starting
+2017-10-11 10:52:18,769 - [ZEROCONF] - zeroconf.py - INFO - decision_tree starting
+2017-10-11 10:52:18,780 - [ZEROCONF] - zeroconf.py - INFO - gaussian_nb starting
+2017-10-11 10:52:18,800 - [ZEROCONF] - zeroconf.py - INFO - bernoulli_nb training time: 0.06455278396606445
+2017-10-11 10:52:18,802 - [ZEROCONF] - zeroconf.py - INFO - gradient_boosting starting
+2017-10-11 10:52:18,808 - [ZEROCONF] - zeroconf.py - INFO - k_nearest_neighbors starting
+2017-10-11 10:52:18,809 - [ZEROCONF] - zeroconf.py - INFO - decision_tree training time: 0.03273773193359375
+2017-10-11 10:52:18,826 - [ZEROCONF] - zeroconf.py - INFO - lda starting
+2017-10-11 10:52:18,845 - [ZEROCONF] - zeroconf.py - INFO - liblinear_svc starting
+2017-10-11 10:52:18,867 - [ZEROCONF] - zeroconf.py - INFO - gaussian_nb training time: 0.08569979667663574
+2017-10-11 10:52:18,882 - [ZEROCONF] - zeroconf.py - INFO - multinomial_nb starting
+2017-10-11 10:52:18,905 - [ZEROCONF] - zeroconf.py - INFO - passive_aggressive starting
+2017-10-11 10:52:18,943 - [ZEROCONF] - zeroconf.py - INFO - random_forest starting
+2017-10-11 10:52:18,971 - [ZEROCONF] - zeroconf.py - INFO - sgd starting
+2017-10-11 10:52:19,012 - [ZEROCONF] - zeroconf.py - INFO - lda training time: 0.17656564712524414
+2017-10-11 10:52:19,023 - [ZEROCONF] - zeroconf.py - INFO - multinomial_nb training time: 0.13777780532836914
+2017-10-11 10:52:19,124 - [ZEROCONF] - zeroconf.py - INFO - liblinear_svc training time: 0.27405595779418945
+2017-10-11 10:52:19,416 - [ZEROCONF] - zeroconf.py - INFO - passive_aggressive training time: 0.508676290512085
+2017-10-11 10:52:19,473 - [ZEROCONF] - zeroconf.py - INFO - sgd training time: 0.49777913093566895
+2017-10-11 10:52:20,471 - [ZEROCONF] - zeroconf.py - INFO - adaboost training time: 1.7392246723175049
+2017-10-11 10:52:20,625 - [ZEROCONF] - zeroconf.py - INFO - k_nearest_neighbors training time: 1.8141863346099854
+2017-10-11 10:52:22,258 - [ZEROCONF] - zeroconf.py - INFO - extra_trees training time: 3.4934401512145996
+2017-10-11 10:52:22,696 - [ZEROCONF] - zeroconf.py - INFO - random_forest training time: 3.7496204376220703
+2017-10-11 10:52:24,215 - [ZEROCONF] - zeroconf.py - INFO - gradient_boosting training time: 5.41023063659668
+2017-10-11 10:52:24,230 - [ZEROCONF] - max_estimators_fit_duration - INFO - Test classifier fit completed
+2017-10-11 10:52:24,239 - [ZEROCONF] - zeroconf.py - INFO - per_run_time_limit=5
+2017-10-11 10:52:24,239 - [ZEROCONF] - zeroconf.py - INFO - Process pool size=2
+2017-10-11 10:52:24,240 - [ZEROCONF] - zeroconf.py - INFO - Starting autosklearn classifiers fiting on a 67% sample up to 67k rows
+2017-10-11 10:52:24,252 - [ZEROCONF] - train_multicore - INFO - Max time allowance for a model 1 minute(s)
+2017-10-11 10:52:24,252 - [ZEROCONF] - train_multicore - INFO - Overal run time is about 10 minute(s)
+2017-10-11 10:52:24,255 - [ZEROCONF] - train_multicore - INFO - Multicore process 2 started
+2017-10-11 10:52:24,258 - [ZEROCONF] - train_multicore - INFO - Multicore process 3 started
+2017-10-11 10:52:24,276 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Start AutoSklearnClassifier seed=2
+2017-10-11 10:52:24,278 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Start AutoSklearnClassifier seed=3
+2017-10-11 10:52:24,295 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Done AutoSklearnClassifier seed=3
+2017-10-11 10:52:24,297 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Done AutoSklearnClassifier seed=2
+2017-10-11 10:52:26,299 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Starting seed=2
+2017-10-11 10:52:27,298 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - Starting seed=3
+2017-10-11 10:56:30,949 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - ####### Finished seed=2
+2017-10-11 10:56:31,600 - [ZEROCONF] - spawn_autosklearn_classifier - INFO - ####### Finished seed=3
+2017-10-11 10:56:31,614 - [ZEROCONF] - train_multicore - INFO - Multicore fit completed
+2017-10-11 10:56:31,626 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - Building ensemble
+2017-10-11 10:56:31,626 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - Done AutoSklearnClassifier - seed:1
+2017-10-11 10:56:54,017 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - Ensemble built - seed:1
+2017-10-11 10:56:54,017 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - Show models - seed:1
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - [(0.400000, SimpleClassificationPipeline({'classifier:__choice__': 'adaboost', 'one_hot_encoding:use_minimum_fraction': 'True', 'preprocessor:select_percentile_classification:percentile': 85.5410729966473, 'classifier:adaboost:n_estimators': 88, 'one_hot_encoding:minimum_fraction': 0.01805038589303469, 'rescaling:__choice__': 'minmax', 'balancing:strategy': 'weighting', 'preprocessor:__choice__': 'select_percentile_classification', 'classifier:adaboost:max_depth': 1, 'classifier:adaboost:learning_rate': 0.10898092508755285, 'preprocessor:select_percentile_classification:score_func': 'chi2', 'imputation:strategy': 'most_frequent', 'classifier:adaboost:algorithm': 'SAMME.R'},
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - dataset_properties={
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'task': 1,
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'signed': False,
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'sparse': False,
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multiclass': False,
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'target_type': 'classification',
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multilabel': False})),
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - (0.300000, SimpleClassificationPipeline({'classifier:__choice__': 'random_forest', 'classifier:random_forest:min_weight_fraction_leaf': 0.0, 'one_hot_encoding:use_minimum_fraction': 'True', 'classifier:random_forest:criterion': 'gini', 'classifier:random_forest:min_samples_leaf': 4, 'classifier:random_forest:max_depth': 'None', 'classifier:random_forest:min_samples_split': 16, 'classifier:random_forest:bootstrap': 'False', 'one_hot_encoding:minimum_fraction': 0.1453954841364777, 'rescaling:__choice__': 'none', 'balancing:strategy': 'none', 'preprocessor:__choice__': 'select_percentile_classification', 'preprocessor:select_percentile_classification:percentile': 96.35414862145892, 'preprocessor:select_percentile_classification:score_func': 'chi2', 'imputation:strategy': 'mean', 'classifier:random_forest:max_leaf_nodes': 'None', 'classifier:random_forest:max_features': 3.342759426984195, 'classifier:random_forest:n_estimators': 100},
+2017-10-11 10:56:54,596 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - dataset_properties={
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'task': 1,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'signed': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'sparse': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multiclass': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'target_type': 'classification',
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multilabel': False})),
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - (0.200000, SimpleClassificationPipeline({'classifier:extra_trees:min_weight_fraction_leaf': 0.0, 'classifier:__choice__': 'extra_trees', 'classifier:extra_trees:n_estimators': 100, 'classifier:extra_trees:bootstrap': 'True', 'preprocessor:extra_trees_preproc_for_classification:min_samples_split': 5, 'classifier:extra_trees:min_samples_leaf': 10, 'rescaling:__choice__': 'minmax', 'classifier:extra_trees:max_depth': 'None', 'preprocessor:extra_trees_preproc_for_classification:bootstrap': 'True', 'preprocessor:extra_trees_preproc_for_classification:criterion': 'gini', 'classifier:extra_trees:max_features': 4.413198608615693, 'classifier:extra_trees:criterion': 'gini', 'preprocessor:extra_trees_preproc_for_classification:n_estimators': 100, 'classifier:extra_trees:min_samples_split': 16, 'one_hot_encoding:use_minimum_fraction': 'False', 'balancing:strategy': 'weighting', 'preprocessor:__choice__': 'extra_trees_preproc_for_classification', 'preprocessor:extra_trees_preproc_for_classification:min_samples_leaf': 1, 'preprocessor:extra_trees_preproc_for_classification:max_features': 1.4824479003506632, 'imputation:strategy': 'median', 'preprocessor:extra_trees_preproc_for_classification:min_weight_fraction_leaf': 0.0, 'preprocessor:extra_trees_preproc_for_classification:max_depth': 'None'},
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - dataset_properties={
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'task': 1,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'signed': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'sparse': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multiclass': False,
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'target_type': 'classification',
+2017-10-11 10:56:54,597 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multilabel': False})),
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - (0.100000, SimpleClassificationPipeline({'classifier:extra_trees:min_weight_fraction_leaf': 0.0, 'classifier:__choice__': 'extra_trees', 'classifier:extra_trees:n_estimators': 100, 'classifier:extra_trees:bootstrap': 'True', 'preprocessor:extra_trees_preproc_for_classification:min_samples_split': 16, 'classifier:extra_trees:min_samples_leaf': 10, 'rescaling:__choice__': 'minmax', 'classifier:extra_trees:max_depth': 'None', 'preprocessor:extra_trees_preproc_for_classification:bootstrap': 'True', 'preprocessor:extra_trees_preproc_for_classification:criterion': 'gini', 'classifier:extra_trees:max_features': 4.16852017424403, 'classifier:extra_trees:criterion': 'gini', 'preprocessor:extra_trees_preproc_for_classification:n_estimators': 100, 'classifier:extra_trees:min_samples_split': 16, 'one_hot_encoding:use_minimum_fraction': 'False', 'balancing:strategy': 'weighting', 'preprocessor:__choice__': 'extra_trees_preproc_for_classification', 'preprocessor:extra_trees_preproc_for_classification:min_samples_leaf': 1, 'preprocessor:extra_trees_preproc_for_classification:max_features': 1.5781770540350555, 'imputation:strategy': 'median', 'preprocessor:extra_trees_preproc_for_classification:min_weight_fraction_leaf': 0.0, 'preprocessor:extra_trees_preproc_for_classification:max_depth': 'None'},
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - dataset_properties={
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'task': 1,
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'signed': False,
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'sparse': False,
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multiclass': False,
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'target_type': 'classification',
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO -   'multilabel': False})),
+2017-10-11 10:56:54,598 - [ZEROCONF] - zeroconf_fit_ensemble - INFO - ]
+2017-10-11 10:56:54,613 - [ZEROCONF] - zeroconf.py - INFO - Validating
+2017-10-11 10:56:54,613 - [ZEROCONF] - zeroconf.py - INFO - Predicting on validation set
+2017-10-11 10:56:57,373 - [ZEROCONF] - zeroconf.py - INFO - ########################################################################
+2017-10-11 10:56:57,374 - [ZEROCONF] - zeroconf.py - INFO - Accuracy score 84%
+2017-10-11 10:56:57,374 - [ZEROCONF] - zeroconf.py - INFO - The below scores are calculated for predicting '1' category value
+2017-10-11 10:56:57,379 - [ZEROCONF] - zeroconf.py - INFO - Precision: 64%, Recall: 77%, F1: 0.70
+2017-10-11 10:56:57,379 - [ZEROCONF] - zeroconf.py - INFO - Confusion Matrix: https://en.wikipedia.org/wiki/Precision_and_recall
+2017-10-11 10:56:57,386 - [ZEROCONF] - zeroconf.py - INFO - [7058 1100]
+2017-10-11 10:56:57,386 - [ZEROCONF] - zeroconf.py - INFO - [ 603 1985]
+2017-10-11 10:56:57,392 - [ZEROCONF] - zeroconf.py - INFO - Baseline 2588 positives from 10746 overall = 24.1%
+2017-10-11 10:56:57,392 - [ZEROCONF] - zeroconf.py - INFO - ########################################################################
+2017-10-11 10:56:57,404 - [ZEROCONF] - x_y_dataframe_split - INFO - Dataframe split into X and y
+2017-10-11 10:56:57,405 - [ZEROCONF] - zeroconf.py - INFO - Re-fitting the model ensemble on full known dataset to prepare for prediciton. This can take a long time.
+2017-10-11 10:58:39,836 - [ZEROCONF] - zeroconf.py - INFO - Predicting. This can take a long time for a large prediction set.
+2017-10-11 10:58:45,221 - [ZEROCONF] - zeroconf.py - INFO - Prediction done
+2017-10-11 10:58:45,223 - [ZEROCONF] - zeroconf.py - INFO - Exporting the data
+2017-10-11 10:58:45,267 - [ZEROCONF] - zeroconf.py - INFO - ##### Zeroconf Script Completed! #####
+2017-10-11 10:58:45,268 - [ZEROCONF] - zeroconf.py - INFO - Clean up / Delete work directory: /home/ulrich/PycharmProjects/autosklearn-zeroconf/work/20171011105215
+
+Process finished with exit code 0
 </pre>
 
 <pre>
@@ -211,37 +229,3 @@ alternatively search for them with
 and explicitly add them to the libraries path
 <pre>export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libstdc++.so.6":"/usr/lib/x86_64-linux-gnu/libgomp.so.1"; python zeroconf.py Titanic.h5 2>/dev/null|grep ZEROCONF</pre>
 Also see https://github.com/automl/auto-sklearn/issues/247
-### Install auto-sklearn
-<pre>
-# A compiler (gcc) is needed to compile a few things the from auto-sklearn requirements.txt
-# Chose just the line for your Linux flavor below
-# On Ubuntu
-sudo apt-get install gcc build-essential swig
-# On CentOS 7-1611 http://www.osboxes.org/centos/ https://drive.google.com/file/d/0B_HAFnYs6Ur-bl8wUWZfcHVpMm8/view?usp=sharing
-sudo yum -y update 
-sudo reboot
-sudo yum install epel-release python34 python34-devel python34-setuptools
-yum -y groupinstall 'Development Tools'
-# auto-sklearn requires swig 3.0 
-curl https://downloads.sourceforge.net/swig/swig-3.0.12.tar.gz
-tar xf swig-3.0.12.tar.gz 
-cd swig-3.0.12 
-./configure --without-pcre
-make
-sudo make install
-cd ..
-sudo easy_install-3.4 pip
-# if you want to use virtual environments
-sudo pip3 install virtualenv
-virtualenv zeroconf -p /usr/bin/python3.4
-source zeroconf/bin/activate
-curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
-</pre>
-
-<pre>
-# If you have no Python environment installed, install Anaconda.
-wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O Anaconda3-Linux-x86_64.sh
-chmod u+x Anaconda3-Linux-x86_64.sh
-./Anaconda3-Linux-x86_64.sh
-conda install libgcc
-</pre>

@@ -1,4 +1,0 @@
-bunch
-psutil
-tables
-auto-sklearn==0.2.0
