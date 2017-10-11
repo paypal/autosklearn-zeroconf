@@ -35,9 +35,9 @@ The code uses a pandas dataframe format to manage the data. It is stored in the 
 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
-<pre>python zeroconf.py Adult.h5 2>/dev/null|grep ZEROCONF</pre>
+<pre>python ./bin/zeroconf.py -d ./data/Adult.h5 </pre>
 And then to evaluate the prediction stored in zerconf-result.csv against the test dataset file adult.test.withid 
-<pre>python evaluate-dataset-Adult.py</pre>
+<pre>python ./bin/evaluate-dataset-Adult.py</pre>
 
 ## Installation
 The script itself needs no installation, just copy it with the rest of the files in your working directory.
