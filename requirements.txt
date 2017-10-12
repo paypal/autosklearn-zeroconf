@@ -1,4 +1,5 @@
 bunch
 psutil
 tables
+ruamel.yaml
 auto-sklearn==0.2.0
