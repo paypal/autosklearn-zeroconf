@@ -27,11 +27,11 @@ plus samplers, scalers, imputers (14 feature processing methods, and 3 data prep
 methods,  giving  rise  to  a  structured  hypothesis  space  with  100+  hyperparameters)
 
 ## Running autosklearn-zeroconf
-To run autosklearn-zeroconf start <pre>python zeroconf.py your_dataframe.h5 2>/dev/null|grep ZEROCONF</pre> from command line.
+To run autosklearn-zeroconf start <pre>python bin/zeroconf.py -d your_dataframe.h5</pre> from command line.
 The script was tested on Ubuntu and RedHat. It won't work on any WindowsOS because auto-sklearn doesn't support Windows.
 
 ## Data Format
-The code uses a pandas dataframe format to manage the data. It is stored in the HDF5 file for convenience.
+The code uses a pandas dataframe format to manage the data. It is stored in the HDF5 .h5 file for convenience. (Python module "tables")
 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
@@ -60,9 +60,8 @@ sudo apt-get install gcc build-essential
 # On RedHat
 yum -y groupinstall 'Development Tools'
 
-curl https://raw.githubusercontent.com/automl/auto-sklearn/master/requirements.txt | xargs -n 1 -L 1 pip install
-pip install auto-sklearn
-pip install ruamel.yaml
+curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+
 
 </pre>
 
@@ -71,7 +70,7 @@ autosklearn-zeroconf is licensed under the [BSD 3-Clause License (Revised)](LICE
 
 ## Example of the output
 <pre>
-python zeroconf.py -d ../data/Adult.h5 2>/dev/null | grep [ZEROCONF]
+python zeroconf.py -d ./data/Adult.h5 2>/dev/null | grep [ZEROCONF]
 
 2017-10-11 10:52:15,893 - [ZEROCONF] - zeroconf.py - INFO - Program Call Parameter (Arguments and Parameter File Values):
 2017-10-11 10:52:15,893 - [ZEROCONF] - zeroconf.py - INFO -    basedir: /home/ulrich/PycharmProjects/autosklearn-zeroconf
