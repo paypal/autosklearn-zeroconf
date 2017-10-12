@@ -8,10 +8,10 @@ It is using a well known Adult (Salary) dataset from UCI https://archive.ics.uci
 """
 import pandas as pd
 
-test = pd.read_csv(filepath_or_buffer='../data/adult.test.withid',sep=',', error_bad_lines=False, index_col=False)
+test = pd.read_csv(filepath_or_buffer='./data/adult.test.withid',sep=',', error_bad_lines=False, index_col=False)
 #print(test)
 
-prediction = pd.read_csv(filepath_or_buffer='../data/zeroconf-result.csv',sep=',', error_bad_lines=False, index_col=False)
+prediction = pd.read_csv(filepath_or_buffer='./data/zeroconf-result.csv',sep=',', error_bad_lines=False, index_col=False)
 #print(prediction)
 
 df=pd.merge(test, prediction, how='inner', on=['cust_id',])
