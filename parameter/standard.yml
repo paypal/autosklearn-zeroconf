@@ -1,4 +1,4 @@
-basedir: /home/ulrich/PycharmProjects/autosklearn-zeroconf
+basedir: .
 resultfile: ./data/zeroconf-result.csv
 memory_limit: 15000  # MB
 max_classifier_time_budget: 1200  # but 10 minutes is usually more than enough

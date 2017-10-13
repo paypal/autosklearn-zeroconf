@@ -7,7 +7,7 @@ from time import sleep
 
 import autosklearn.pipeline
 import autosklearn.pipeline.components.classification
-import d2khelper as d2k
+import utility as utl
 import pandas as pd
 import psutil
 from autosklearn.classification import AutoSklearnClassifier
@@ -35,7 +35,7 @@ def time_single_estimator(clf_name, clf_class, X, y, max_clf_time, logger):
 
 
 def max_estimators_fit_duration(X, y, max_classifier_time_budget, logger, sample_factor=1):
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
 
     lo.info("Constructing preprocessor pipeline and transforming sample data")
     # we don't care about the data here but need to preprocess, otherwise the classifiers crash
@@ -83,7 +83,7 @@ def read_dataframe_h5(filename, logger):
 
 
 def x_y_dataframe_split(dataframe, parameter, id=False):
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
 
     lo.info("Dataframe split into X and y")
     X = dataframe.drop([parameter["id_field"], parameter["target_field"]], axis=1)
@@ -114,7 +114,7 @@ def calculate_time_left_for_this_task(pool_size, per_run_time_limit):
 
 def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left_for_this_task, per_run_time_limit,
                                  feat_type, memory_limit, atsklrn_tempdir):
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
 
     try:
         lo.info("Start AutoSklearnClassifier seed=" + str(seed))
@@ -133,7 +133,7 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
         lo.execption("Exception AutoSklearnClassifier seed=" + str(seed))
         raise
 
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
     lo.info("Done AutoSklearnClassifier seed=" + str(seed))
 
     sleep(seed)
@@ -143,21 +143,21 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
         try:
             clf.fit(X_train, y_train, metric=autosklearn.metrics.f1, feat_type=feat_type, dataset_name=dataset_name)
         except Exception:
-            lo = d2k.get_logger(inspect.stack()[0][3])
+            lo = utl.get_logger(inspect.stack()[0][3])
             lo.execption("Error in clf.fit - seed:" + str(seed))
             raise
     except Exception:
-        lo = d2k.get_logger(inspect.stack()[0][3])
+        lo = utl.get_logger(inspect.stack()[0][3])
         lo.execption("Exception in seed=" + str(seed) + ".  ")
         traceback.print_exc()
         raise
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
     lo.info("####### Finished seed=" + str(seed))
     return None
 
 
 def train_multicore(X, y, feat_type, memory_limit, atsklrn_tempdir, pool_size=1, per_run_time_limit=60):
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
 
     time_left_for_this_task = calculate_time_left_for_this_task(pool_size, per_run_time_limit)
 
@@ -180,7 +180,7 @@ def train_multicore(X, y, feat_type, memory_limit, atsklrn_tempdir, pool_size=1,
 
 
 def zeroconf_fit_ensemble(y, atsklrn_tempdir):
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
 
     lo.info("Building ensemble")
 
@@ -207,11 +207,11 @@ def zeroconf_fit_ensemble(y, atsklrn_tempdir):
             , ensemble_size=10
             , ensemble_nbest=15)
     except Exception:
-        lo = d2k.get_logger(inspect.stack()[0][3])
+        lo = utl.get_logger(inspect.stack()[0][3])
         lo.execption("Error in ensemble.fit_ensemble - seed:" + str(seed))
         raise
 
-    lo = d2k.get_logger(inspect.stack()[0][3])
+    lo = utl.get_logger(inspect.stack()[0][3])
     lo.debug("Done ensemble.fit_ensemble - seed:" + str(seed))
 
     sleep(20)
