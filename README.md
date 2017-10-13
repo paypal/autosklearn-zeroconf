@@ -250,3 +250,6 @@ source zeroconf/bin/activate
 
 curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
 </pre>
+
+# Contributors
+Egor Kobylkin, Ulrich Arndt
