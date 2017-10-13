@@ -41,11 +41,16 @@ def handle_exception(exc_type, exc_value, exc_traceback):
         return
     logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
+def merge_two_dicts(x, y):
+    """Given two dicts, merge them into a new dict as a shallow copy."""
+    z = x.copy()
+    z.update(y)
+    return z
 
 def read_parameter(parameter_file, parameter):
     fr = open(parameter_file, "r")
     param = yaml.load(fr, yaml.RoundTripLoader)
-    return {**parameter, **param}
+    return merge_two_dicts(parameter,param)
 
 
 def end_proc_success(parameter, logger):

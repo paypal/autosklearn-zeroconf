@@ -19,10 +19,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import (confusion_matrix, precision_score,
                              recall_score, f1_score, accuracy_score)
 
-import d2khelper as d2k
+import utility as utl
 import dataTransformationProcessing as dt
 
-parameter = d2k.init_process(__file__)
+parameter = utl.init_process(__file__)
 
 ###########################################################
 # define the command line argument parser
@@ -45,7 +45,7 @@ parser.add_argument('-p',
                     )
 
 args = parser.parse_args()
-logger = d2k.get_logger(os.path.basename(__file__))
+logger = utl.get_logger(os.path.basename(__file__))
 logger.info("Program started with the following arguments:")
 logger.info(args)
 
@@ -82,7 +82,7 @@ if (not (os.path.isfile(data_file))):
     logger.error(msg)
     exit(8)
 
-parameter = d2k.read_parameter(param_file, parameter)
+parameter = utl.read_parameter(param_file, parameter)
 
 parameter["data_file"] = os.path.abspath(data_file)
 parameter["basedir"] = os.path.abspath(parameter["basedir"])
@@ -96,7 +96,7 @@ parameter["resultfile"] = os.path.abspath(parameter["resultfile"])
 os.chdir(parameter["basedir"])
 logger.info("Set basedir to: " + parameter["basedir"])
 
-logger = d2k.get_logger(os.path.basename(__file__))
+logger = utl.get_logger(os.path.basename(__file__))
 
 logger.info("Program Call Parameter (Arguments and Parameter File Values):")
 for key in sorted(parameter.keys()):
@@ -175,7 +175,7 @@ dt.train_multicore(X_train.values, y_train, feat_type, int(memory_limit), atsklr
 
 ensemble = dt.zeroconf_fit_ensemble(y_train, atsklrn_tempdir)
 
-logger = d2k.get_logger(os.path.basename(__file__))
+logger = utl.get_logger(os.path.basename(__file__))
 logger.info("Validating")
 logger.info("Predicting on validation set")
 y_hat = ensemble.predict(X_test.values)
@@ -253,4 +253,4 @@ result_df = pd.DataFrame(
 logger.info("Exporting the data")
 result_df.to_csv(result_filename, index=False, header=True)
 logger.info("##### Zeroconf Script Completed! #####")
-d2k.end_proc_success(parameter, logger)
+utl.end_proc_success(parameter, logger)
