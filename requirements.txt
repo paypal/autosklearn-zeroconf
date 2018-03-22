@@ -2,4 +2,5 @@ bunch
 psutil
 tables
 ruamel.yaml
+cython
 auto-sklearn==0.2.0
