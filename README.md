@@ -50,7 +50,7 @@ sudo apt-get update && sudo apt-get install git && git clone https://github.com/
 sudo apt-get update && sudo apt-get install git gcc build-essential swig
 git clone https://github.com/paypal/autosklearn-zeroconf.git
 pip install virtualenv
-virtualenv zeroconf -p /usr/bin/python3.5
+virtualenv zeroconf -p /usr/bin/python3.6
 source zeroconf/bin/activate
 curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
 </pre>
