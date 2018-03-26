@@ -3,4 +3,4 @@ psutil
 tables
 ruamel.yaml
 cython
-auto-sklearn==0.2.0
+auto-sklearn==0.3.0
