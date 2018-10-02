@@ -30,7 +30,7 @@ parameter = utl.init_process(__file__)
 # https://docs.python.org/2/howto/argparse.html
 parser = argparse.ArgumentParser(
     description='zero configuration predictic modeling script. Requires a pandas HDFS dataframe file ' + \
-                'and a ymal parameter file as input as input')
+                'and a yaml parameter file as input as input')
 parser.add_argument('-d',
                     '--data_file',
                     nargs=1,
