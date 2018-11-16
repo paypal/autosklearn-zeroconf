@@ -130,7 +130,7 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
                                     ensemble_size=0,
                                     seed=seed)
     except Exception:
-        lo.execption("Exception AutoSklearnClassifier seed=" + str(seed))
+        lo.exception("Exception AutoSklearnClassifier seed=" + str(seed))
         raise
 
     lo = utl.get_logger(inspect.stack()[0][3])
@@ -144,11 +144,11 @@ def spawn_autosklearn_classifier(X_train, y_train, seed, dataset_name, time_left
             clf.fit(X_train, y_train, metric=autosklearn.metrics.f1, feat_type=feat_type, dataset_name=dataset_name)
         except Exception:
             lo = utl.get_logger(inspect.stack()[0][3])
-            lo.execption("Error in clf.fit - seed:" + str(seed))
+            lo.exception("Error in clf.fit - seed:" + str(seed))
             raise
     except Exception:
         lo = utl.get_logger(inspect.stack()[0][3])
-        lo.execption("Exception in seed=" + str(seed) + ".  ")
+        lo.exception("Exception in seed=" + str(seed) + ".  ")
         traceback.print_exc()
         raise
     lo = utl.get_logger(inspect.stack()[0][3])
@@ -208,7 +208,7 @@ def zeroconf_fit_ensemble(y, atsklrn_tempdir):
             , ensemble_nbest=15)
     except Exception:
         lo = utl.get_logger(inspect.stack()[0][3])
-        lo.execption("Error in ensemble.fit_ensemble - seed:" + str(seed))
+        lo.exception("Error in ensemble.fit_ensemble - seed:" + str(seed))
         raise
 
     lo = utl.get_logger(inspect.stack()[0][3])
