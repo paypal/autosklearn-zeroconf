@@ -44,6 +44,7 @@ The script itself needs no installation, just copy it with the rest of the files
 Alternatively you could use git clone
 <pre>
 sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
+</pre>
 
 ### Happy path installation on Ubuntu 18.04LTS
 <pre>
