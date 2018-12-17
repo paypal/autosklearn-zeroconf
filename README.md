@@ -47,7 +47,7 @@ sudo apt-get update && sudo apt-get install git && git clone https://github.com/
 
 ### Happy path installation on Ubuntu 18.04LTS
 <pre>
-sudo apt-get update && sudo apt-get install git gcc build-essential swig python-pip
+sudo apt-get update && sudo apt-get install git gcc build-essential swig python-pip virtualenv python3-dev
 git clone https://github.com/paypal/autosklearn-zeroconf.git
 pip install virtualenv
 virtualenv zeroconf -p /usr/bin/python3.6
@@ -55,6 +55,7 @@ source zeroconf/bin/activate
 curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
 git clone https://github.com/paypal/autosklearn-zeroconf.git
 </pre>
+
 ### Happy path installation on Ubuntu 16.04LTS
 <pre>
 sudo apt-get update && sudo apt-get install git gcc build-essential swig
