@@ -44,6 +44,16 @@ The script itself needs no installation, just copy it with the rest of the files
 Alternatively you could use git clone
 <pre>
 sudo apt-get update && sudo apt-get install git && git clone https://github.com/paypal/autosklearn-zeroconf.git
+
+### Happy path installation on Ubuntu 18.04LTS
+<pre>
+sudo apt-get update && sudo apt-get install git gcc build-essential swig python-pip
+git clone https://github.com/paypal/autosklearn-zeroconf.git
+pip install virtualenv
+virtualenv zeroconf -p /usr/bin/python3.6
+source zeroconf/bin/activate
+curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+git clone https://github.com/paypal/autosklearn-zeroconf.git
 </pre>
 ### Happy path installation on Ubuntu 16.04LTS
 <pre>
