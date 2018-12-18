@@ -35,7 +35,7 @@ The code uses a pandas dataframe format to manage the data. It is stored in the 
 
 ## Example
 As an example you can run autosklearn-zeroconf on a "Census Income" dataset https://archive.ics.uci.edu/ml/datasets/Adult.
-<pre>python ./bin/zeroconf.py -d ./data/Adult.h5 </pre>
+<pre>python ./bin/zeroconf.py -d ./data/Adult.h5</pre>
 And then to evaluate the prediction stored in zerconf-result.csv against the test dataset file adult.test.withid 
 <pre>python ./bin/evaluate-dataset-Adult.py</pre>
 
@@ -55,16 +55,7 @@ virtualenv zeroconf -p /usr/bin/python3.6
 source zeroconf/bin/activate
 curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
 git clone https://github.com/paypal/autosklearn-zeroconf.git
-</pre>
-
-### Happy path installation on Ubuntu 16.04LTS
-<pre>
-sudo apt-get update && sudo apt-get install git gcc build-essential swig
-git clone https://github.com/paypal/autosklearn-zeroconf.git
-pip install virtualenv
-virtualenv zeroconf -p /usr/bin/python3.6
-source zeroconf/bin/activate
-curl https://raw.githubusercontent.com/paypal/autosklearn-zeroconf/master/requirements.txt | xargs -n 1 -L 1 pip install
+cd autosklearn-zeroconf/ && python ./bin/zeroconf.py -d ./data/Adult.h5 2>/dev/null
 </pre>
 
 ## License
