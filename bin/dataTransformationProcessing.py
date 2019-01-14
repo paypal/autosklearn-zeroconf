@@ -8,6 +8,8 @@ from time import sleep
 import autosklearn.pipeline
 import autosklearn.pipeline.components.classification
 import utility as utl
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 import psutil
 from autosklearn.classification import AutoSklearnClassifier
