@@ -101,6 +101,12 @@ def define_pool_size(memory_limit):
     # some classifiers can use more than one core - so keep this at half memory and cores
     max_pool_size = int(math.ceil(psutil.virtual_memory().total / (memory_limit * 1000000)))
     half_of_cores = int(math.ceil(psutil.cpu_count() / 2.0))
+    
+    lo = utl.get_logger(inspect.stack()[0][3])
+    lo.info("Virtual Memory Size = " + str(psutil.virtual_memory().total) )
+    lo.info("CPU Count =" + str(psutil.cpu_count()) )
+    lo.info("Max CPU Pool Size by Memory = " + str(max_pool_size) )
+    
     return half_of_cores if max_pool_size > half_of_cores else max_pool_size
 
 
