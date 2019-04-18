@@ -153,7 +153,7 @@ if dataset_size > max_sample_size:
     sample_factor = dataset_size / float(max_sample_size)
     logger.info("Sample factor =" + str(sample_factor))
     X_sample, y_sample = dt.x_y_dataframe_split(df_known.sample(max_sample_size, random_state=42), parameter)
-    X_train, X_test, y_train, y_test = dt.train_test_split(X.copy(), y, stratify=y, test_size=33000,
+    X_train, X_test, y_train, y_test = train_test_split(X.copy(), y, stratify=y, test_size=33000,
                                                            random_state=42)  # no need for larger test
 else:
     sample_factor = 1
